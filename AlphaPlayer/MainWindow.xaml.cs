@@ -13,6 +13,7 @@ namespace AlphaPlayer
         private WaveOutEvent waveOutDevice = new WaveOutEvent();
         private string filepath;
         private Timer aTimer;
+        private bool isPaused = true;
 
         public MainWindow()
         {
@@ -94,11 +95,13 @@ namespace AlphaPlayer
             }
 
             this.waveOutDevice.Play();
+            this.isPaused = false;
             this.aTimer.Enabled = true;
         }
 
         private void PauseButton_Click(object sender, RoutedEventArgs e)
         {
+            this.isPaused = true;
             this.waveOutDevice.Stop();
             this.aTimer.Enabled = false;
         }
@@ -113,10 +116,15 @@ namespace AlphaPlayer
             this.aTimer.Enabled = true;
             this.waveOutDevice.Stop();
             this.reader.CurrentTime = TimeSpan.FromMilliseconds((this.SongTimeSlider.Value / 100.0f) * this.reader.TotalTime.TotalMilliseconds);
-            if (this.waveOutDevice.PlaybackState == PlaybackState.Playing)
+            if (!isPaused)
             {
                 this.waveOutDevice.Play();
             }
+            App.Current.Dispatcher.Invoke((Action)delegate
+            {
+                this.CurrentTimeLabel.Content = this.reader.CurrentTime.ToString("hh\\:mm\\:ss");
+                this.SongTimeSlider.Value = (this.reader.CurrentTime.TotalMilliseconds / this.reader.TotalTime.TotalMilliseconds) * 100;
+            });
         }
 
         private void SongTimeSlider_PreviewMouseDown(object sender, MouseButtonEventArgs e)
