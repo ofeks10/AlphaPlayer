@@ -43,20 +43,28 @@ namespace AlphaPlayer
 
             if (true == result)
             {
-                Song song = this.player.LoadFile(dialog.FileName);
-
-                // Initialize the time lables
-                this.SongTotalTimeLabel.Content = General_Helper.FormatTimeSpan(this.player.CurrentSong.SongLength);
-                this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(TimeSpan.Zero);
-
-                // Set the title and the label to the current song name
-                this.WhatsPlayingLabel.Content = song.SongName;
-                this.Title = song.SongName;
-
-                // Enable the sliders
-                this.SongTimeSlider.IsEnabled = true;
-                this.VolumeSlider.IsEnabled = true;
+                this.LoadAndUpdateGUI(dialog.FileName);
+                this.player.PlaySong();
             }
+        }
+
+        public void LoadAndUpdateGUI(string fileName)
+        {
+            Song song = this.player.LoadFile(fileName);
+
+            // Initialize the time lables
+            this.SongTotalTimeLabel.Content = General_Helper.FormatTimeSpan(this.player.CurrentSong.SongLength);
+            this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(TimeSpan.Zero);
+
+            this.SongTimeSlider.Value = 0;
+
+            // Set the title and the label to the current song name
+            this.WhatsPlayingLabel.Content = song.SongName;
+            this.Title = song.SongName;
+
+            // Enable the sliders
+            this.SongTimeSlider.IsEnabled = true;
+            this.VolumeSlider.IsEnabled = true;
         }
 
         // Runs every second, changes the current time label
@@ -66,9 +74,18 @@ namespace AlphaPlayer
             {
                 TimeSpan currentTime = this.player.GetCurrentTime();
 
+                // Change the current time label
                 this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(currentTime);
                 this.SongTimeSlider.Value = 
                     (currentTime.TotalMilliseconds / this.player.CurrentSong.SongLength.TotalMilliseconds) * 100;
+
+                // Check if song ended - infrastructure for queue in future.
+                if (currentTime == this.player.CurrentSong.SongLength)
+                {
+                    // Than you can do somthing like that for the next song:
+                    /*this.LoadAndUpdateGUI(songName);
+                    this.player.PlaySong();*/
+                }
             });
         }
 
