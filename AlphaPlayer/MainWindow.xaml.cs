@@ -40,6 +40,10 @@ namespace AlphaPlayer
 
             if (true == result)
             {
+                if(this.reader != null)
+                {
+                    this.waveOutDevice.Stop();
+                }
                 this.filepath = dialog.FileName;
                 WhatsPlayingLabel.Content = Path.GetFileName(this.filepath);
                 this.reader = new Mp3FileReader(this.filepath);
