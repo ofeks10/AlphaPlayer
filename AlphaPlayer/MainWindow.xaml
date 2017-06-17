@@ -8,14 +8,14 @@
         Title="" Width="560" Height="200" ResizeMode="NoResize">
     <Grid>
         <Button x:Name="PlayButton" Content="Play" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="40" Height="40" Click="PlayButton_Click"/>
-        <Button x:Name="PauseButton" Content="Pause" HorizontalAlignment="Left" Margin="58,10,0,0" VerticalAlignment="Top" Width="40" Height="40"/>
+        <Button x:Name="PauseButton" Content="Pause" HorizontalAlignment="Left" Margin="58,10,0,0" VerticalAlignment="Top" Width="40" Height="40" Click="PauseButton_Click"/>
         <Button x:Name="NextButton" Content="&gt;" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Width="40" Height="40"/>
         <Button x:Name="PreviousButton" Content="&lt;" HorizontalAlignment="Left" Margin="154,10,0,0" VerticalAlignment="Top" Width="40" Height="40"/>
         <Button x:Name="BrowseButton" Content="Browse" HorizontalAlignment="Left" Margin="203,10,0,0" VerticalAlignment="Top" Width="66" Height="40" Click="BrowseButton_Click"/>
-        <Slider x:Name="VolumeSlider" HorizontalAlignment="Left" Margin="281,23,0,0" VerticalAlignment="Top" Width="206" Maximum="100"/>
+        <Slider x:Name="VolumeSlider" HorizontalAlignment="Left" Margin="281,23,0,0" VerticalAlignment="Top" Width="206" Maximum="100" ValueChanged="VolumeSlider_ValueChanged"/>
         <Label x:Name="PlayingNowLabel" Content="Playing Now: " HorizontalAlignment="Left" Margin="12,78,0,0" VerticalAlignment="Top"/>
         <Label x:Name="WhatsPlayingLabel" Content="Label" HorizontalAlignment="Left" Margin="94,78,0,0" VerticalAlignment="Top"/>
-        <Slider x:Name="SongTimeSlider" HorizontalAlignment="Left" Margin="12,120,0,0" VerticalAlignment="Top" Width="409"/>
+        <Slider x:Name="SongTimeSlider" HorizontalAlignment="Left" Margin="12,120,0,0" VerticalAlignment="Top" Width="409" Maximum="100" PreviewMouseUp="SongTimeSlider_PreviewMouseUp" PreviewMouseDown="SongTimeSlider_PreviewMouseDown"/>
         <Label x:Name="CurrentTimeLabel" Content="00:00:00" HorizontalAlignment="Left" Margin="424,114,0,0" VerticalAlignment="Top"/>
         <Label x:Name="SongTotalTimeLabel" Content=" / 00:00:00" HorizontalAlignment="Left" Margin="472,114,0,0" VerticalAlignment="Top"/>
     </Grid>
