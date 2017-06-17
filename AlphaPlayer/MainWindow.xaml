@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AlphaPlayer"
         mc:Ignorable="d"
-        Title="" Width="560" Height="200" ResizeMode="NoResize">
+        Title="AlphaPlayer 1.0" Width="560" Height="200" ResizeMode="NoResize">
     <Grid>
         <Button x:Name="PlayButton" Content="Play" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="40" Height="40" Click="PlayButton_Click"/>
         <Button x:Name="PauseButton" Content="Pause" HorizontalAlignment="Left" Margin="58,10,0,0" VerticalAlignment="Top" Width="40" Height="40" Click="PauseButton_Click"/>

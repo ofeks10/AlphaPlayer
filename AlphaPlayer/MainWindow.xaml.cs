@@ -49,6 +49,7 @@ namespace AlphaPlayer
                 this.reader = new Mp3FileReader(this.filepath);
                 this.SongTotalTimeLabel.Content = " / " + this.reader.TotalTime.ToString("hh\\:mm\\:ss");
                 this.CurrentTimeLabel.Content = this.reader.CurrentTime;
+                this.Title = this.WhatsPlayingLabel.Content.ToString();
             }
         }
 
