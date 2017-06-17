@@ -1,6 +1,5 @@
 ﻿using System;
 using NAudio.Wave;
-using System.Threading;
 
 namespace AlphaPlayer.Helper_Classes
 {

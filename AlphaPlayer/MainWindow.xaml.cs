@@ -46,7 +46,7 @@ namespace AlphaPlayer
                 Song song = this.player.LoadFile(dialog.FileName);
 
                 // Initialize the time lables
-                this.SongTotalTimeLabel.Content = song.GetFormattedSongTime();
+                this.SongTotalTimeLabel.Content = General_Helper.FormatTimeSpan(this.player.CurrentSong.SongLength);
                 this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(TimeSpan.Zero);
 
                 // Set the title and the label to the current song name
