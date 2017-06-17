@@ -1,0 +1,1 @@
+1. Add current time display to the slider while sliding

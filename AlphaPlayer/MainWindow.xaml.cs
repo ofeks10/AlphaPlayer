@@ -98,7 +98,10 @@ namespace AlphaPlayer
             this.aTimer.Enabled = true;
             this.waveOutDevice.Stop();
             this.reader.CurrentTime = TimeSpan.FromMilliseconds((this.SongTimeSlider.Value / 100.0f) * this.reader.TotalTime.TotalMilliseconds);
-            this.waveOutDevice.Play();
+            if (this.waveOutDevice.PlaybackState == PlaybackState.Playing)
+            {
+                this.waveOutDevice.Play();
+            }
         }
 
         private void SongTimeSlider_PreviewMouseDown(object sender, MouseButtonEventArgs e)
