@@ -73,6 +73,11 @@ namespace AlphaPlayer
                 MessageBox.Show("Please select a song before pressing play");
                 return;
             }
+            catch(InvalidOperationException)
+            {
+                return;
+            }
+
             this.waveOutDevice.Play();
             this.aTimer.Enabled = true;
         }
