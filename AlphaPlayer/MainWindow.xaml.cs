@@ -74,8 +74,11 @@ namespace AlphaPlayer
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            if(!this.player.IsSongLoaded())
+            if (!this.player.IsSongLoaded())
+            {
                 MessageBox.Show("Please select a song before pressing play");
+                return;
+            }
 
             if (this.player.IsCurrentlyPlaying())
                 return;
@@ -94,6 +97,7 @@ namespace AlphaPlayer
         private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             this.player.SetVolume((float)this.VolumeSlider.Value / 100.0f);
+            this.VolumePrecentageLabel.Content = Math.Floor(this.player.GetVolume() * 100) + "%";
         }
 
         private void SongTimeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e)

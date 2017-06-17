@@ -19,5 +19,6 @@
         <Label x:Name="CurrentTimeLabel" Content="00:00:00" HorizontalAlignment="Left" Margin="421,114,0,0" VerticalAlignment="Top"/>
         <Label x:Name="SongTotalTimeLabel" Content="00:00:00" HorizontalAlignment="Left" Margin="490,114,0,0" VerticalAlignment="Top"/>
         <Label Content="/" HorizontalAlignment="Left" Margin="475,114,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="VolumePrecentageLabel" Content="50%" HorizontalAlignment="Left" Margin="493,18,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.108,-0.269"/>
     </Grid>
 </Window>
