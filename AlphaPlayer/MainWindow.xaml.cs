@@ -28,6 +28,8 @@ namespace AlphaPlayer
 
             this.waveOutDevice.Volume = 0.5f;
             this.VolumeSlider.Value = this.waveOutDevice.Volume * 100;
+            this.SongTimeSlider.IsEnabled = false;
+            this.VolumeSlider.IsEnabled = false;
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -47,12 +49,20 @@ namespace AlphaPlayer
                 this.filepath = dialog.FileName;
                 WhatsPlayingLabel.Content = Path.GetFileName(this.filepath);
                 this.reader = new Mp3FileReader(this.filepath);
+
+                // Initialize the time lables
                 this.SongTotalTimeLabel.Content = " / " + this.reader.TotalTime.ToString("hh\\:mm\\:ss");
                 this.CurrentTimeLabel.Content = this.reader.CurrentTime;
+
                 this.Title = this.WhatsPlayingLabel.Content.ToString();
+
+                // Enable the sliders
+                this.SongTimeSlider.IsEnabled = true;
+                this.VolumeSlider.IsEnabled = true;
             }
         }
 
+        // Runs every second, changes the current time label
         public void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             App.Current.Dispatcher.Invoke((Action)delegate
@@ -76,6 +86,11 @@ namespace AlphaPlayer
             catch(InvalidOperationException)
             {
                 return;
+            }
+
+            if(this.reader.CurrentTime == this.reader.TotalTime)
+            {
+                this.reader.CurrentTime = TimeSpan.Zero;
             }
 
             this.waveOutDevice.Play();
