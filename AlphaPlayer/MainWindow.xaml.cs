@@ -56,11 +56,16 @@ namespace AlphaPlayer
             var dialog = new System.Windows.Forms.FolderBrowserDialog();
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
 
-            Song firstSong = this.player.LoadPlaylist(dialog.SelectedPath);
-            this.player.LoadFile(firstSong);
-            this.UpdateGUI();
-            this.player.PlaySong();
-            this.aTimer.Enabled = true;
+            if(result == System.Windows.Forms.DialogResult.OK)
+            {
+                Song firstSong = this.player.LoadPlaylist(dialog.SelectedPath);
+                this.player.LoadFile(firstSong);
+                this.UpdateGUI();
+                this.player.PlaySong();
+                this.aTimer.Enabled = true;
+            }
+
+            
         }
 
         public void UpdateGUI()
