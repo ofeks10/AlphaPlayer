@@ -12,8 +12,20 @@ namespace AlphaPlayer
         private System.Timers.Timer aTimer;
         private Player Player;
         private PlayerAPI Api;
+        private bool IsMouseDownOnSongTimeSlider = false;
 
         private Thread ApiThread;
+
+        private void InitializeTimer()
+        {
+            this.aTimer = new System.Timers.Timer()
+            {
+                Interval = 1000
+            };
+
+            this.aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            this.aTimer.AutoReset = true;
+        }
 
         public MainWindow()
         {
@@ -26,13 +38,8 @@ namespace AlphaPlayer
             this.ApiThread = new Thread(new ThreadStart(this.Api.Start));
             this.ApiThread.Start();
 
-            aTimer = new System.Timers.Timer()
-            {
-                Interval = 1000
-            };
-
-            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            aTimer.AutoReset = true;
+            // Initialize The Timer
+            this.InitializeTimer();
 
             // Initialize the volume slider
             this.VolumeSlider.Value = this.Player.GetVolume() * 100;
@@ -120,7 +127,7 @@ namespace AlphaPlayer
                 // Check if song ended
                 if (currentTime == this.Player.CurrentSong.SongLength)
                 {
-                    // Check if ther is a playlist
+                    // Check if there is a playlist
                     Song nextSong = this.Player.GetNextSong();
                     if (null != this.Player.Playlist && nextSong != null)
                     {
@@ -162,6 +169,7 @@ namespace AlphaPlayer
 
         private void SongTimeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
+            IsMouseDownOnSongTimeSlider = false;
             this.aTimer.Enabled = true;
             this.Player.StopSongWhileChangingTime();
 
@@ -184,6 +192,7 @@ namespace AlphaPlayer
 
         private void SongTimeSlider_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            IsMouseDownOnSongTimeSlider = true;
             this.aTimer.Enabled = false;
         }
 
@@ -233,6 +242,15 @@ namespace AlphaPlayer
         {
             Exit();
             base.OnClosing(e);
+        }
+
+        private void SongTimeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (IsMouseDownOnSongTimeSlider)
+            { 
+                this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(TimeSpan.FromMilliseconds(
+                    (this.SongTimeSlider.Value / 100.0f) * this.Player.CurrentSong.SongLength.TotalMilliseconds));
+            }
         }
     }
 }

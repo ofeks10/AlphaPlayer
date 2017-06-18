@@ -24,7 +24,7 @@
         <Slider x:Name="VolumeSlider" HorizontalAlignment="Left" Margin="281,23,0,0" VerticalAlignment="Top" Width="206" Maximum="100" ValueChanged="VolumeSlider_ValueChanged"/>
         <Label x:Name="PlayingNowLabel" Content="Playing Now: " HorizontalAlignment="Left" Margin="12,78,0,0" VerticalAlignment="Top"/>
         <Label x:Name="WhatsPlayingLabel" Content="Label" HorizontalAlignment="Left" Margin="94,78,0,0" VerticalAlignment="Top"/>
-        <Slider x:Name="SongTimeSlider" HorizontalAlignment="Left" Margin="12,120,0,0" VerticalAlignment="Top" Width="409" Maximum="100" PreviewMouseUp="SongTimeSlider_PreviewMouseUp" PreviewMouseDown="SongTimeSlider_PreviewMouseDown"/>
+        <Slider x:Name="SongTimeSlider" HorizontalAlignment="Left" Margin="12,120,0,0" VerticalAlignment="Top" Width="409" Maximum="100" PreviewMouseUp="SongTimeSlider_PreviewMouseUp" PreviewMouseDown="SongTimeSlider_PreviewMouseDown" ValueChanged="SongTimeSlider_ValueChanged"/>
         <Label x:Name="CurrentTimeLabel" Content="00:00:00" HorizontalAlignment="Left" Margin="421,114,0,0" VerticalAlignment="Top"/>
         <Label x:Name="SongTotalTimeLabel" Content="00:00:00" HorizontalAlignment="Left" Margin="490,114,0,0" VerticalAlignment="Top"/>
         <Label Content="/" HorizontalAlignment="Left" Margin="475,114,0,0" VerticalAlignment="Top"/>
