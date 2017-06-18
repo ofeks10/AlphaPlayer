@@ -1,5 +1,7 @@
 ﻿using System;
 using NAudio.Wave;
+using System.Collections.Generic;
+using System.IO;
 
 namespace AlphaPlayer.Helper_Classes
 {
@@ -9,6 +11,7 @@ namespace AlphaPlayer.Helper_Classes
         private WaveOutEvent waveOutDevice;
         public Song CurrentSong;
         public bool IsPlaying;
+        public LinkedList<Song> Playlist;
 
         public Player()
         {
@@ -17,6 +20,7 @@ namespace AlphaPlayer.Helper_Classes
             this.IsPlaying = false;
 
             this.waveOutDevice.Volume = 0.5f;
+            this.Playlist = null;
         }
 
         public Song LoadFile(string filepath)
@@ -26,6 +30,18 @@ namespace AlphaPlayer.Helper_Classes
                 
             this.reader = new Mp3FileReader(filepath);
             this.CurrentSong = new Song(filepath, reader.TotalTime);
+            this.waveOutDevice.Init(reader);
+
+            return this.CurrentSong;
+        }
+
+        public Song LoadFile(Song song)
+        {
+            if (this.IsSongLoaded())
+                this.StopSong();
+
+            this.reader = new Mp3FileReader(song.SongPath);
+            this.CurrentSong = song;
             this.waveOutDevice.Init(reader);
 
             return this.CurrentSong;
@@ -46,6 +62,24 @@ namespace AlphaPlayer.Helper_Classes
 
             this.waveOutDevice.Play();
             this.IsPlaying = true;
+        }
+
+        public Song LoadPlaylist(string path)
+        {
+            if (null != this.Playlist)
+                this.Playlist.Clear();
+
+            this.Playlist = new LinkedList<Song>();
+
+            string[] fileNames = Directory.GetFiles(path, "*.mp3");
+
+            foreach (string fileName in fileNames)
+            {
+                Song song = this.LoadFile(fileName);
+               this.Playlist.AddLast(song);
+            }
+
+            return this.Playlist.First.Value;
         }
 
         public void StopSongWhileChangingTime()
@@ -82,6 +116,24 @@ namespace AlphaPlayer.Helper_Classes
         public void SetVolume(float volume)
         {
             this.waveOutDevice.Volume = volume;
+        }
+
+        public Song GetNextSong()
+        {
+            LinkedListNode<Song> node = this.Playlist.Find(this.CurrentSong).Next;
+            if (node != null)
+                return node.Value;
+            else
+                return null;
+        }
+
+        public Song GetPreviousSong()
+        {
+            LinkedListNode<Song> node = this.Playlist.Find(this.CurrentSong).Previous;
+            if (node != null)
+                return node.Value;
+            else
+                return null;
         }
     }
 }

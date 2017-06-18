@@ -3,12 +3,13 @@ using System.Windows;
 using System.Timers;
 using System.Windows.Input;
 using AlphaPlayer.Helper_Classes;
+using System.Windows.Forms;
 
 namespace AlphaPlayer
 {
     public partial class MainWindow : Window
     {
-        private Timer aTimer;
+        private System.Timers.Timer aTimer;
         private Player player;
 
         public MainWindow()
@@ -17,7 +18,7 @@ namespace AlphaPlayer
 
             this.player = new Player();
 
-            aTimer = new Timer()
+            aTimer = new System.Timers.Timer()
             {
                 Interval = 1000
             };
@@ -33,7 +34,7 @@ namespace AlphaPlayer
             this.VolumeSlider.IsEnabled = false;
         }
 
-        private void BrowseButton_Click(object sender, RoutedEventArgs e)
+        private void BrowseButtonFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
             dialog.DefaultExt = ".mp3";
@@ -43,15 +44,27 @@ namespace AlphaPlayer
 
             if (true == result)
             {
-                this.LoadAndUpdateGUI(dialog.FileName);
+                Song song = this.player.LoadFile(dialog.FileName);
+                this.UpdateGUI();
                 this.player.PlaySong();
+                this.aTimer.Enabled = true;
             }
         }
 
-        public void LoadAndUpdateGUI(string fileName)
+        private void BrowseButtonFolder_Click(object sender, RoutedEventArgs e)
         {
-            Song song = this.player.LoadFile(fileName);
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
 
+            Song firstSong = this.player.LoadPlaylist(dialog.SelectedPath);
+            this.player.LoadFile(firstSong);
+            this.UpdateGUI();
+            this.player.PlaySong();
+            this.aTimer.Enabled = true;
+        }
+
+        public void UpdateGUI()
+        {
             // Initialize the time lables
             this.SongTotalTimeLabel.Content = General_Helper.FormatTimeSpan(this.player.CurrentSong.SongLength);
             this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(TimeSpan.Zero);
@@ -59,8 +72,8 @@ namespace AlphaPlayer
             this.SongTimeSlider.Value = 0;
 
             // Set the title and the label to the current song name
-            this.WhatsPlayingLabel.Content = song.SongName;
-            this.Title = song.SongName;
+            this.WhatsPlayingLabel.Content = this.player.CurrentSong.SongName;
+            this.Title = this.player.CurrentSong.SongName;
 
             // Enable the sliders
             this.SongTimeSlider.IsEnabled = true;
@@ -79,12 +92,17 @@ namespace AlphaPlayer
                 this.SongTimeSlider.Value = 
                     (currentTime.TotalMilliseconds / this.player.CurrentSong.SongLength.TotalMilliseconds) * 100;
 
-                // Check if song ended - infrastructure for queue in future.
+                // Check if song ended
                 if (currentTime == this.player.CurrentSong.SongLength)
                 {
-                    // Than you can do somthing like that for the next song:
-                    /*this.LoadAndUpdateGUI(songName);
-                    this.player.PlaySong();*/
+                    // Check if ther is a playlist
+                    Song nextSong = this.player.GetNextSong();
+                    if (null != this.player.Playlist && nextSong != null)
+                    {
+                        Song song = this.player.LoadFile(nextSong);
+                        this.UpdateGUI();
+                        this.player.PlaySong();
+                    }
                 }
             });
         }
@@ -93,7 +111,7 @@ namespace AlphaPlayer
         {
             if (!this.player.IsSongLoaded())
             {
-                MessageBox.Show("Please select a song before pressing play");
+                System.Windows.MessageBox.Show("Please select a song before pressing play");
                 return;
             }
 
@@ -146,6 +164,28 @@ namespace AlphaPlayer
         private void SongTimeSlider_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             this.aTimer.Enabled = false;
+        }
+
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            Song nextSong = this.player.GetNextSong();
+            if (null != this.player.Playlist && nextSong != null)
+            {
+                Song song = this.player.LoadFile(nextSong);
+                this.UpdateGUI();
+                this.player.PlaySong();
+            }
+        }
+
+        private void PreviousButton_Click(object sender, RoutedEventArgs e)
+        {
+            Song previousSong = this.player.GetPreviousSong();
+            if (null != this.player.Playlist && previousSong != null)
+            {
+                Song song = this.player.LoadFile(previousSong);
+                this.UpdateGUI();
+                this.player.PlaySong();
+            }
         }
     }
 }
