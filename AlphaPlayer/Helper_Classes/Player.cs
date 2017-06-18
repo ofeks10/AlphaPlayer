@@ -35,7 +35,7 @@ namespace AlphaPlayer.Helper_Classes
             return this.CurrentSong;
         }
 
-        public Song LoadFile(Song song)
+        public void LoadFile(Song song)
         {
             if (this.IsSongLoaded())
                 this.StopSong();
@@ -43,8 +43,6 @@ namespace AlphaPlayer.Helper_Classes
             this.reader = new Mp3FileReader(song.SongPath);
             this.CurrentSong = song;
             this.waveOutDevice.Init(reader);
-
-            return this.CurrentSong;
         }
 
         public bool IsCurrentlyPlaying()
@@ -54,6 +52,13 @@ namespace AlphaPlayer.Helper_Classes
 
         public void PlaySong()
         {
+            if (!this.IsSongLoaded())
+                throw new InvalidOperationException("Please load a song before pressing play");
+
+            // TODO: Implement Exception for this case.
+            if (this.IsCurrentlyPlaying())
+                return;
+
             if(this.reader.CurrentTime == this.CurrentSong.SongLength)
             {
                 // Zeroing the current time
@@ -125,6 +130,36 @@ namespace AlphaPlayer.Helper_Classes
                 return node.Value;
             else
                 return null;
+        }
+
+        public void PlayNextSong()
+        {
+            Song song = this.GetNextSong();
+            if (null != song)
+            {
+                this.LoadFile(song);
+                this.PlaySong();
+            }
+            else
+            {
+                // TODO: Implement Exception for this case.
+                throw new InvalidOperationException("No next song");
+            }
+        }
+
+        public void PlayPreviousSong()
+        {
+            Song song = this.GetPreviousSong();
+            if (null != song)
+            {
+                this.LoadFile(song);
+                this.PlaySong();
+            }
+            else
+            {
+                // TODO: Implement Exception for this case.
+                throw new InvalidOperationException("No prevoius song");
+            }
         }
 
         public Song GetPreviousSong()

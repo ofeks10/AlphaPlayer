@@ -128,36 +128,37 @@ namespace AlphaPlayer
                 if (currentTime == this.Player.CurrentSong.SongLength)
                 {
                     // Check if there is a playlist
-                    Song nextSong = this.Player.GetNextSong();
-                    if (null != this.Player.Playlist && nextSong != null)
+                    try
                     {
-                        Song song = this.Player.LoadFile(nextSong);
-                        this.InitGUIAfterLoading();
-                        this.Player.PlaySong();
+                        this.Player.PlayNextSong();
+                    } 
+                    catch (InvalidOperationException)
+                    {
+                        return;
                     }
+
+                    this.InitGUIAfterLoading();
                 }
             });
         }
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!this.Player.IsSongLoaded())
+            try
             {
-                MessageBox.Show("Please select a song before pressing play");
-                return;
+                this.Player.PlaySong();
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message);
             }
 
-            if (this.Player.IsCurrentlyPlaying())
-                return;
-
-            this.Player.PlaySong();
             this.aTimer.Enabled = true;
         }
 
         private void PauseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Player.StopSong();
-            this.Player.IsPlaying = false;
             this.aTimer.Enabled = false;
         }
 
@@ -198,31 +199,30 @@ namespace AlphaPlayer
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            if (null == this.Player.Playlist)
-                return;
-
-
-            Song nextSong = this.Player.GetNextSong();
-            if (null != this.Player.Playlist && nextSong != null)
+            try
             {
-                Song song = this.Player.LoadFile(nextSong);
-                this.InitGUIAfterLoading();
-                this.Player.PlaySong();
+                this.Player.PlayNextSong();
             }
+            catch (InvalidOperationException)
+            {
+                return;
+            }
+
+            this.InitGUIAfterLoading();
         }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
-            if (null == this.Player.Playlist)
-                return;
-
-            Song previousSong = this.Player.GetPreviousSong();
-            if (null != this.Player.Playlist && previousSong != null)
+            try
             {
-                Song song = this.Player.LoadFile(previousSong);
-                this.InitGUIAfterLoading();
-                this.Player.PlaySong();
+                this.Player.PlayPreviousSong();
             }
+            catch (InvalidOperationException)
+            {
+                return;
+            }
+
+            this.InitGUIAfterLoading();
         }
 
         private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
