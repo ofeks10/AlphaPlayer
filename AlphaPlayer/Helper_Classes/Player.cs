@@ -125,6 +125,9 @@ namespace AlphaPlayer.Helper_Classes
 
         public Song GetNextSong()
         {
+            if (null == this.Playlist)
+                throw new InvalidOperationException("No Playlist loaded");
+
             LinkedListNode<Song> node = this.Playlist.Find(this.CurrentSong).Next;
             if (node != null)
                 return node.Value;
@@ -164,6 +167,9 @@ namespace AlphaPlayer.Helper_Classes
 
         public Song GetPreviousSong()
         {
+            if (null == this.Playlist)
+                throw new InvalidOperationException("No Playlist loaded");
+
             LinkedListNode<Song> node = this.Playlist.Find(this.CurrentSong).Previous;
             if (node != null)
                 return node.Value;
