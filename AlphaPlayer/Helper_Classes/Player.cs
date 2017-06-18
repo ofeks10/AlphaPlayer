@@ -75,8 +75,8 @@ namespace AlphaPlayer.Helper_Classes
 
             foreach (string fileName in fileNames)
             {
-                Song song = this.LoadFile(fileName);
-               this.Playlist.AddLast(song);
+                Song song = await this.LoadFile(fileName);
+                this.Playlist.AddLast(song);
             }
 
             return this.Playlist.First.Value;
