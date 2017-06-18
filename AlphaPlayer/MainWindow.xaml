@@ -17,7 +17,7 @@
                     <MenuItem Header="Open file..." Click="BrowseButtonFile_Click"/>
                     <MenuItem Header="Open folder..." Click="BrowseButtonFolder_Click"/>
                     <Separator />
-                    <MenuItem Header="Exit"/>
+                    <MenuItem Header="Exit" Click="ExitMenuItem_Click"/>
                 </ContextMenu>
             </Button.ContextMenu>
         </Button>

@@ -3,20 +3,28 @@ using System.Windows;
 using System.Timers;
 using System.Windows.Input;
 using AlphaPlayer.Helper_Classes;
-using System.Windows.Forms;
+using System.Threading;
 
 namespace AlphaPlayer
 {
     public partial class MainWindow : Window
     {
         private System.Timers.Timer aTimer;
-        private Player player;
+        private Player Player;
+        private PlayerAPI Api;
+
+        private Thread ApiThread;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            this.player = new Player();
+            this.Player = new Player();
+            this.Api = new PlayerAPI(8080, this.Player);
+
+            // Create and start the api thread
+            this.ApiThread = new Thread(new ThreadStart(this.Api.Start));
+            this.ApiThread.Start();
 
             aTimer = new System.Timers.Timer()
             {
@@ -27,7 +35,7 @@ namespace AlphaPlayer
             aTimer.AutoReset = true;
 
             // Initialize the volume slider
-            this.VolumeSlider.Value = this.player.GetVolume() * 100;
+            this.VolumeSlider.Value = this.Player.GetVolume() * 100;
 
             // Disable the sliders
             this.SongTimeSlider.IsEnabled = false;
@@ -44,9 +52,9 @@ namespace AlphaPlayer
 
             if (true == result)
             {
-                Song song = this.player.LoadFile(dialog.FileName);
-                this.UpdateGUI();
-                this.player.PlaySong();
+                Song song = this.Player.LoadFile(dialog.FileName);
+                this.InitGUIAfterLoading();
+                this.Player.PlaySong();
                 this.aTimer.Enabled = true;
             }
         }
@@ -58,31 +66,46 @@ namespace AlphaPlayer
 
             if(result == System.Windows.Forms.DialogResult.OK)
             {
-                Song firstSong = this.player.LoadPlaylist(dialog.SelectedPath);
-                this.player.LoadFile(firstSong);
-                this.UpdateGUI();
-                this.player.PlaySong();
+                Song firstSong = this.Player.LoadPlaylist(dialog.SelectedPath);
+                this.Player.LoadFile(firstSong);
+                this.InitGUIAfterLoading();
+                this.Player.PlaySong();
                 this.aTimer.Enabled = true;
             }
-
-            
         }
 
-        public void UpdateGUI()
+        public void InitGUIAfterLoading()
         {
             // Initialize the time lables
-            this.SongTotalTimeLabel.Content = General_Helper.FormatTimeSpan(this.player.CurrentSong.SongLength);
+            this.SongTotalTimeLabel.Content = General_Helper.FormatTimeSpan(this.Player.CurrentSong.SongLength);
             this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(TimeSpan.Zero);
 
             this.SongTimeSlider.Value = 0;
 
             // Set the title and the label to the current song name
-            this.WhatsPlayingLabel.Content = this.player.CurrentSong.SongName;
-            this.Title = this.player.CurrentSong.SongName;
+            this.WhatsPlayingLabel.Content = this.Player.CurrentSong.SongName;
+            this.Title = this.Player.CurrentSong.SongName;
 
             // Enable the sliders
             this.SongTimeSlider.IsEnabled = true;
             this.VolumeSlider.IsEnabled = true;
+        }
+
+        public void UpdateGUI()
+        {
+            TimeSpan currentTime = this.Player.GetCurrentTime();
+
+            // Change the current time label
+            this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(currentTime);
+            this.SongTimeSlider.Value =
+                (currentTime.TotalMilliseconds / this.Player.CurrentSong.SongLength.TotalMilliseconds) * 100;
+
+            this.SongTotalTimeLabel.Content = General_Helper.FormatTimeSpan(this.Player.CurrentSong.SongLength);
+
+            this.WhatsPlayingLabel.Content = this.Player.CurrentSong.SongName;
+            this.Title = this.Player.CurrentSong.SongName;
+
+            this.VolumeSlider.Value = this.Player.GetVolume() * 100f;
         }
 
         // Runs every second, changes the current time label
@@ -90,23 +113,20 @@ namespace AlphaPlayer
         {
             App.Current.Dispatcher.Invoke((Action)delegate
             {
-                TimeSpan currentTime = this.player.GetCurrentTime();
+                TimeSpan currentTime = this.Player.GetCurrentTime();
 
-                // Change the current time label
-                this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(currentTime);
-                this.SongTimeSlider.Value = 
-                    (currentTime.TotalMilliseconds / this.player.CurrentSong.SongLength.TotalMilliseconds) * 100;
+                UpdateGUI();
 
                 // Check if song ended
-                if (currentTime == this.player.CurrentSong.SongLength)
+                if (currentTime == this.Player.CurrentSong.SongLength)
                 {
                     // Check if ther is a playlist
-                    Song nextSong = this.player.GetNextSong();
-                    if (null != this.player.Playlist && nextSong != null)
+                    Song nextSong = this.Player.GetNextSong();
+                    if (null != this.Player.Playlist && nextSong != null)
                     {
-                        Song song = this.player.LoadFile(nextSong);
-                        this.UpdateGUI();
-                        this.player.PlaySong();
+                        Song song = this.Player.LoadFile(nextSong);
+                        this.InitGUIAfterLoading();
+                        this.Player.PlaySong();
                     }
                 }
             });
@@ -114,55 +134,51 @@ namespace AlphaPlayer
 
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!this.player.IsSongLoaded())
+            if (!this.Player.IsSongLoaded())
             {
-                System.Windows.MessageBox.Show("Please select a song before pressing play");
+                MessageBox.Show("Please select a song before pressing play");
                 return;
             }
 
-            if (this.player.IsCurrentlyPlaying())
+            if (this.Player.IsCurrentlyPlaying())
                 return;
 
-            this.player.PlaySong();
+            this.Player.PlaySong();
             this.aTimer.Enabled = true;
         }
 
         private void PauseButton_Click(object sender, RoutedEventArgs e)
         {
-            this.player.StopSong();
-            this.player.IsPlaying = false;
+            this.Player.StopSong();
+            this.Player.IsPlaying = false;
             this.aTimer.Enabled = false;
         }
 
         private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            this.player.SetVolume((float)this.VolumeSlider.Value / 100.0f);
-            this.VolumePrecentageLabel.Content = Math.Floor(this.player.GetVolume() * 100) + "%";
+            this.Player.SetVolume((float)this.VolumeSlider.Value / 100.0f);
+            this.VolumePrecentageLabel.Content = Math.Floor(this.Player.GetVolume() * 100) + "%";
         }
 
         private void SongTimeSlider_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             this.aTimer.Enabled = true;
-            this.player.StopSongWhileChangingTime();
+            this.Player.StopSongWhileChangingTime();
 
             // Set the new time
-            this.player.SetCurrentTime(
+            this.Player.SetCurrentTime(
                 TimeSpan.FromMilliseconds((this.SongTimeSlider.Value / 100.0f) * 
-                this.player.CurrentSong.SongLength.TotalMilliseconds));
+                this.Player.CurrentSong.SongLength.TotalMilliseconds));
 
-            if (this.player.IsPlaying)
+            if (this.Player.IsPlaying)
             {
-                this.player.PlaySong();
+                this.Player.PlaySong();
             }
 
             // Upadte the time immediately
             App.Current.Dispatcher.Invoke((Action)delegate
             {
-                TimeSpan currentTime = this.player.GetCurrentTime();
-
-                this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(currentTime);
-                this.SongTimeSlider.Value =
-                    (currentTime.TotalMilliseconds / this.player.CurrentSong.SongLength.TotalMilliseconds) * 100;
+                UpdateGUI();
             });
         }
 
@@ -173,24 +189,50 @@ namespace AlphaPlayer
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            Song nextSong = this.player.GetNextSong();
-            if (null != this.player.Playlist && nextSong != null)
+            if (null == this.Player.Playlist)
+                return;
+
+
+            Song nextSong = this.Player.GetNextSong();
+            if (null != this.Player.Playlist && nextSong != null)
             {
-                Song song = this.player.LoadFile(nextSong);
-                this.UpdateGUI();
-                this.player.PlaySong();
+                Song song = this.Player.LoadFile(nextSong);
+                this.InitGUIAfterLoading();
+                this.Player.PlaySong();
             }
         }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
-            Song previousSong = this.player.GetPreviousSong();
-            if (null != this.player.Playlist && previousSong != null)
+            if (null == this.Player.Playlist)
+                return;
+
+            Song previousSong = this.Player.GetPreviousSong();
+            if (null != this.Player.Playlist && previousSong != null)
             {
-                Song song = this.player.LoadFile(previousSong);
-                this.UpdateGUI();
-                this.player.PlaySong();
+                Song song = this.Player.LoadFile(previousSong);
+                this.InitGUIAfterLoading();
+                this.Player.PlaySong();
             }
+        }
+
+        private void ExitMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Exit();
+        }
+
+        private void Exit()
+        {
+            this.Api.Stop();
+            this.ApiThread.Abort();
+            System.Windows.Application.Current.Shutdown();
+            Environment.Exit(0);
+        }
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            Exit();
+            base.OnClosing(e);
         }
     }
 }
