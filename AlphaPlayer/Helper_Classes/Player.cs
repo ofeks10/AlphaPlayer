@@ -41,6 +41,7 @@ namespace AlphaPlayer.Helper_Classes
                 this.StopSong();
 
             this.reader = new Mp3FileReader(song.SongPath);
+            song.SongLength = this.reader.TotalTime;
             this.CurrentSong = song;
             this.waveOutDevice.Init(reader);
         }
@@ -80,8 +81,7 @@ namespace AlphaPlayer.Helper_Classes
 
             foreach (string fileName in fileNames)
             {
-                Song song = this.LoadFile(fileName);
-                this.Playlist.AddLast(song);
+                this.Playlist.AddLast(new Song(fileName));
             }
 
             return this.Playlist.First.Value;

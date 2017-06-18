@@ -18,5 +18,13 @@ namespace AlphaPlayer.Helper_Classes
 
             this.CurrentTime = TimeSpan.Zero;
         }
+
+        public Song(string SongPath)
+        {
+            this.SongPath = SongPath;
+            this.SongName = Path.GetFileName(this.SongPath);
+
+            this.CurrentTime = TimeSpan.Zero;
+        }
     }
 }
