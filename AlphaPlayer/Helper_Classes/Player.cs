@@ -49,7 +49,10 @@ namespace AlphaPlayer.Helper_Classes
 
             if (!this.IsFileSupported(filepath))
                 throw new InvalidDataException("Unsupported file extension.");
-                
+
+            if (null != this.reader)
+                this.reader.Dispose();
+
             this.reader = new Mp3FileReader(filepath);
             this.CurrentSong = new Song(filepath, reader.TotalTime, 1);
             this.Playlist = new LinkedList<Song>();
@@ -72,6 +75,8 @@ namespace AlphaPlayer.Helper_Classes
             if (!this.IsFileSupported(song.SongName))
                 throw new InvalidDataException("Unsupported file extension.");
 
+            if (null != this.reader)
+                this.reader.Dispose();
 
             this.reader = new Mp3FileReader(song.SongPath);
             song.SongLength = this.reader.TotalTime;
