@@ -230,6 +230,7 @@ namespace AlphaPlayer
             try
             {
                 this.Player.PlayNextSong();
+                this.aTimer.Enabled = true;
             }
             catch (InvalidOperationException)
             {
@@ -248,6 +249,7 @@ namespace AlphaPlayer
             try
             {
                 this.Player.PlayPreviousSong();
+                this.aTimer.Enabled = true;
             }
             catch (InvalidOperationException)
             {
