@@ -5,6 +5,7 @@
 * ~~Fix Player.LoadPlaylist() function to be more fast and effective~~
 * Implement our exceptions such as: PlayerAlreadyPlayingException, NoPlaylistLoadedException, and more.
 * Fix the bug that happen when pressing next/previous to a broken/not real mp3 files.
+* Add a column of duration to each song in the playlist ListBox
 
 ### Issues
 * There is a race sometimes when clicking on the timing slider causing the song to be paused for some reason.
