@@ -9,8 +9,8 @@
     <Grid>
         <Button x:Name="PlayButton" Content="Play" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="40" Height="40" Click="PlayButton_Click"/>
         <Button x:Name="PauseButton" Content="Pause" HorizontalAlignment="Left" Margin="58,10,0,0" VerticalAlignment="Top" Width="40" Height="40" Click="PauseButton_Click"/>
-        <Button x:Name="NextButton" Content="&gt;" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Width="40" Height="40" Click="NextButton_Click"/>
-        <Button x:Name="PreviousButton" Content="&lt;" HorizontalAlignment="Left" Margin="154,10,0,0" VerticalAlignment="Top" Width="40" Height="40" Click="PreviousButton_Click"/>
+        <Button x:Name="NextButton" Content="&gt;" HorizontalAlignment="Left" Margin="154,10,0,0" VerticalAlignment="Top" Width="40" Height="40" Click="NextButton_Click"/>
+        <Button x:Name="PreviousButton" Content="&lt;" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Width="40" Height="40" Click="PreviousButton_Click"/>
         <Button x:Name="BrowseButton" Content="Browse" HorizontalAlignment="Left" Margin="203,10,0,0" VerticalAlignment="Top" Width="66" Height="40" Click="BrowseButtonFile_Click">
             <Button.ContextMenu>
                 <ContextMenu>
