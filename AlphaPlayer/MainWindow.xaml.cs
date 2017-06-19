@@ -4,6 +4,7 @@ using System.Timers;
 using System.Windows.Input;
 using AlphaPlayer.Helper_Classes;
 using System.Threading;
+using System.IO;
 
 namespace AlphaPlayer
 {
@@ -55,17 +56,24 @@ namespace AlphaPlayer
         {
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
             dialog.DefaultExt = ".mp3";
-            dialog.Filter = "Music Files|*.mp3;*.wav";
+            dialog.Filter = "Music Files|*.mp3";
 
             Nullable<bool> result = dialog.ShowDialog();
 
             if (true == result)
             {
-                Song song = this.Player.LoadFile(dialog.FileName);
+                try {
+                    Song song = this.Player.LoadFile(dialog.FileName);
+                }
+                catch (InvalidDataException ex) {
+                    MessageBox.Show(ex.Message);
+                    return;
+                }
+
                 this.InitGUIAfterLoading();
                 this.Player.PlaySong();
                 this.aTimer.Enabled = true;
-            }
+                }
         }
 
         private void BrowseButtonFolder_Click(object sender, RoutedEventArgs e)
@@ -76,7 +84,16 @@ namespace AlphaPlayer
             if(result == System.Windows.Forms.DialogResult.OK)
             {
                 Song firstSong = this.Player.LoadPlaylist(dialog.SelectedPath);
-                this.Player.LoadFile(firstSong);
+
+                try
+                {
+                    this.Player.LoadFile(firstSong);
+                }
+                catch (InvalidDataException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return;
+                }
                 this.InitGUIAfterLoading();
                 this.Player.PlaySong();
                 this.aTimer.Enabled = true;
@@ -140,6 +157,10 @@ namespace AlphaPlayer
                         this.Player.PlayNextSong();
                     } 
                     catch (InvalidOperationException)
+                    {
+                        return;
+                    }
+                    catch (InvalidDataException)
                     {
                         return;
                     }
@@ -214,6 +235,10 @@ namespace AlphaPlayer
             {
                 return;
             }
+            catch(InvalidDataException)
+            {
+                return;
+            }
 
             this.InitGUIAfterLoading();
         }
@@ -225,6 +250,10 @@ namespace AlphaPlayer
                 this.Player.PlayPreviousSong();
             }
             catch (InvalidOperationException)
+            {
+                return;
+            }
+            catch (InvalidDataException)
             {
                 return;
             }
@@ -264,7 +293,14 @@ namespace AlphaPlayer
         {
             string selectedItem = this.PlaylistListBox.SelectedItem.ToString();
             Song song = this.Player.GetSongByName(selectedItem);
-            this.Player.PlaySpecificSong(song);
+            try
+            {
+                this.Player.PlaySpecificSong(song);
+            }
+            catch (InvalidDataException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

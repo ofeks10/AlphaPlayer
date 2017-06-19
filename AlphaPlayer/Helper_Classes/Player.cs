@@ -14,6 +14,8 @@ namespace AlphaPlayer.Helper_Classes
         public bool IsPlaying;
         public LinkedList<Song> Playlist;
 
+        public string[] SupportedExtensions;
+
         public Player()
         {
             this.waveOutDevice = new WaveOutEvent();
@@ -22,6 +24,8 @@ namespace AlphaPlayer.Helper_Classes
 
             this.waveOutDevice.Volume = 0.5f;
             this.Playlist = null;
+
+            this.SupportedExtensions = new string[] {".mp3"};
         }
 
         public string[] GetPlaylistSongsNames()
@@ -42,6 +46,9 @@ namespace AlphaPlayer.Helper_Classes
         {
             if (this.IsSongLoaded())
                 this.StopSong();
+
+            if (!this.IsFileSupported(filepath))
+                throw new InvalidDataException("Unsupported file extension.");
                 
             this.reader = new Mp3FileReader(filepath);
             this.CurrentSong = new Song(filepath, reader.TotalTime, 1);
@@ -52,10 +59,19 @@ namespace AlphaPlayer.Helper_Classes
             return this.CurrentSong;
         }
 
+        public bool IsFileSupported(string filepath)
+        {
+            return this.SupportedExtensions.Contains(Path.GetExtension(filepath));
+        }
+
         public void LoadFile(Song song)
         {
             if (this.IsSongLoaded())
                 this.StopSong();
+
+            if (!this.IsFileSupported(song.SongName))
+                throw new InvalidDataException("Unsupported file extension.");
+
 
             this.reader = new Mp3FileReader(song.SongPath);
             song.SongLength = this.reader.TotalTime;
