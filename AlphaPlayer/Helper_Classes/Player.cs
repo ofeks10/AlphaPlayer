@@ -2,6 +2,7 @@
 using NAudio.Wave;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace AlphaPlayer.Helper_Classes
 {
@@ -23,13 +24,29 @@ namespace AlphaPlayer.Helper_Classes
             this.Playlist = null;
         }
 
+        public string[] GetPlaylistSongsNames()
+        {
+            if (null == this.Playlist)
+                return null;
+
+            List<string> names = new List<string>();
+            foreach(Song song in this.Playlist)
+            {
+                names.Add(song.SongName);
+            }
+
+            return names.ToArray();
+        }
+
         public Song LoadFile(string filepath)
         {
             if (this.IsSongLoaded())
                 this.StopSong();
                 
             this.reader = new Mp3FileReader(filepath);
-            this.CurrentSong = new Song(filepath, reader.TotalTime);
+            this.CurrentSong = new Song(filepath, reader.TotalTime, 1);
+            this.Playlist = new LinkedList<Song>();
+            this.Playlist.AddLast(this.CurrentSong);
             this.waveOutDevice.Init(reader);
 
             return this.CurrentSong;
@@ -78,10 +95,11 @@ namespace AlphaPlayer.Helper_Classes
             this.Playlist = new LinkedList<Song>();
 
             string[] fileNames = Directory.GetFiles(path, "*.mp3");
-
+            int counter = 1;
             foreach (string fileName in fileNames)
             {
-                this.Playlist.AddLast(new Song(fileName));
+                this.Playlist.AddLast(new Song(fileName, counter));
+                counter++;
             }
 
             return this.Playlist.First.Value;
@@ -175,6 +193,17 @@ namespace AlphaPlayer.Helper_Classes
                 return node.Value;
             else
                 return null;
+        }
+
+        public Song GetSongByName(string songName)
+        {
+            return this.Playlist.Where(song => song.SongName == songName).First();
+        }
+
+        public void PlaySpecificSong(Song song)
+        {
+            this.LoadFile(song);
+            this.PlaySong();
         }
     }
 }

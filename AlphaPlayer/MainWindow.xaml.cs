@@ -47,6 +47,8 @@ namespace AlphaPlayer
             // Disable the sliders
             this.SongTimeSlider.IsEnabled = false;
             this.VolumeSlider.IsEnabled = false;
+
+            this.PlaylistListBox.IsEnabled = false;
         }
 
         private void BrowseButtonFile_Click(object sender, RoutedEventArgs e)
@@ -89,6 +91,9 @@ namespace AlphaPlayer
 
             this.SongTimeSlider.Value = 0;
 
+            PlaylistListBox.ItemsSource = this.Player.GetPlaylistSongsNames();
+            this.PlaylistListBox.SelectedItem = this.Player.CurrentSong.SongName;
+
             // Set the title and the label to the current song name
             this.WhatsPlayingLabel.Content = this.Player.CurrentSong.SongName;
             this.Title = this.Player.CurrentSong.SongName;
@@ -96,6 +101,8 @@ namespace AlphaPlayer
             // Enable the sliders
             this.SongTimeSlider.IsEnabled = true;
             this.VolumeSlider.IsEnabled = true;
+
+            this.PlaylistListBox.IsEnabled = true;
         }
 
         public void UpdateGUI()
@@ -251,6 +258,13 @@ namespace AlphaPlayer
                 this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(TimeSpan.FromMilliseconds(
                     (this.SongTimeSlider.Value / 100.0f) * this.Player.CurrentSong.SongLength.TotalMilliseconds));
             }
+        }
+
+        private void PlaylistListBox_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            string selectedItem = this.PlaylistListBox.SelectedItem.ToString();
+            Song song = this.Player.GetSongByName(selectedItem);
+            this.Player.PlaySpecificSong(song);
         }
     }
 }
