@@ -4,7 +4,7 @@
 * ~~Add current time display to the slider while sliding~~
 * ~~Fix Player.LoadPlaylist() function to be more fast and effective~~
 * Add implementation for songs that are not mp3.
-* Check if the Init function is the cause of huge lag or is it the reader creation.
+* ~~Check if the Init function is the cause of huge lag or is it the reader creation.~~ - it's the reader
 * Add a column of duration to each song in the playlist ListBox.
 * Implement drag and drop to reorder the queue.
 * ~~Implement drag and drop of songs to the queue.~~
