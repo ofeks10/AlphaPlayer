@@ -49,7 +49,7 @@ namespace AlphaPlayer
             this.SongTimeSlider.IsEnabled = false;
             this.VolumeSlider.IsEnabled = false;
 
-            this.PlaylistListBox.IsEnabled = false;
+            //this.PlaylistListBox.IsEnabled = false;
         }
 
         private void BrowseButtonFile_Click(object sender, RoutedEventArgs e)
@@ -104,9 +104,14 @@ namespace AlphaPlayer
         {
             // Initialize the time lables
             this.SongTotalTimeLabel.Content = General_Helper.FormatTimeSpan(this.Player.CurrentSong.SongLength);
-            this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(TimeSpan.Zero);
 
-            this.SongTimeSlider.Value = 0;
+            if (!this.Player.IsCurrentlyPlaying())
+            {
+                this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(TimeSpan.Zero);
+                this.SongTimeSlider.Value = 0;
+            }
+
+            
 
             PlaylistListBox.ItemsSource = this.Player.GetPlaylistSongsNames();
             this.PlaylistListBox.SelectedItem = this.Player.CurrentSong.SongName;
@@ -135,6 +140,8 @@ namespace AlphaPlayer
 
             this.WhatsPlayingLabel.Content = this.Player.CurrentSong.SongName;
             this.Title = this.Player.CurrentSong.SongName;
+
+            PlaylistListBox.ItemsSource = this.Player.GetPlaylistSongsNames();
 
             this.VolumeSlider.Value = this.Player.GetVolume() * 100f;
         }
@@ -303,6 +310,36 @@ namespace AlphaPlayer
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void Window_Drop(object sender, DragEventArgs e)
+        {
+            string[] droppedFiles = null;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                droppedFiles = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+            }
+
+            if (null == droppedFiles) { return; }
+
+            foreach (string s in droppedFiles)
+            {
+                try
+                {
+                    this.Player.AddSongToPlaylist(s);
+                }
+                catch (InvalidDataException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+
+            this.InitGUIAfterLoading();
+            this.Player.PlaySong();
         }
     }
 }
