@@ -104,9 +104,14 @@ namespace AlphaPlayer
         {
             // Initialize the time lables
             this.SongTotalTimeLabel.Content = General_Helper.FormatTimeSpan(this.Player.CurrentSong.SongLength);
-            this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(TimeSpan.Zero);
 
-            this.SongTimeSlider.Value = 0;
+            if (!this.Player.IsCurrentlyPlaying())
+            {
+                this.CurrentTimeLabel.Content = General_Helper.FormatTimeSpan(TimeSpan.Zero);
+                this.SongTimeSlider.Value = 0;
+            }
+
+            
 
             PlaylistListBox.ItemsSource = this.Player.GetPlaylistSongsNames();
             this.PlaylistListBox.SelectedItem = this.Player.CurrentSong.SongName;
@@ -307,11 +312,6 @@ namespace AlphaPlayer
             }
         }
 
-        private void UpdatePlaylist()
-        {
-            PlaylistListBox.ItemsSource = this.Player.GetPlaylistSongsNames();
-        }
-
         private void Window_Drop(object sender, DragEventArgs e)
         {
             string[] droppedFiles = null;
@@ -338,7 +338,8 @@ namespace AlphaPlayer
                 }
             }
 
-            this.UpdatePlaylist();
+            this.InitGUIAfterLoading();
+            this.Player.PlaySong();
         }
     }
 }

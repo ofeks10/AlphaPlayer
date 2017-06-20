@@ -232,13 +232,17 @@ namespace AlphaPlayer.Helper_Classes
 
             // TODO: fix this shitty thing!
             if (this.Playlist == null)
-                throw new InvalidOperationException("You cant drag and drop into empy playlist");
+                //throw new InvalidOperationException("You cant drag and drop into empy playlist");
+                this.Playlist = new LinkedList<Song>();
 
             if (this.Playlist.Where(tempSong => tempSong.SongPath == filepath).Count() != 0)
                 throw new InvalidDataException("Song is already in playlist");
 
             Song song = new Song(filepath);
             this.Playlist.AddLast(song);
+
+            if (this.Playlist.Count() == 1)
+                this.LoadFile(song);
         }
     }
 }
