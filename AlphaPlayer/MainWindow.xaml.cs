@@ -49,7 +49,7 @@ namespace AlphaPlayer
             this.SongTimeSlider.IsEnabled = false;
             this.VolumeSlider.IsEnabled = false;
 
-            this.PlaylistListBox.IsEnabled = false;
+            //this.PlaylistListBox.IsEnabled = false;
         }
 
         private void BrowseButtonFile_Click(object sender, RoutedEventArgs e)
@@ -135,6 +135,8 @@ namespace AlphaPlayer
 
             this.WhatsPlayingLabel.Content = this.Player.CurrentSong.SongName;
             this.Title = this.Player.CurrentSong.SongName;
+
+            PlaylistListBox.ItemsSource = this.Player.GetPlaylistSongsNames();
 
             this.VolumeSlider.Value = this.Player.GetVolume() * 100f;
         }
@@ -303,6 +305,40 @@ namespace AlphaPlayer
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void UpdatePlaylist()
+        {
+            PlaylistListBox.ItemsSource = this.Player.GetPlaylistSongsNames();
+        }
+
+        private void Window_Drop(object sender, DragEventArgs e)
+        {
+            string[] droppedFiles = null;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                droppedFiles = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+            }
+
+            if (null == droppedFiles) { return; }
+
+            foreach (string s in droppedFiles)
+            {
+                try
+                {
+                    this.Player.AddSongToPlaylist(s);
+                }
+                catch (InvalidDataException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+
+            this.UpdatePlaylist();
         }
     }
 }

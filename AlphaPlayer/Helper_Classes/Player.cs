@@ -54,7 +54,7 @@ namespace AlphaPlayer.Helper_Classes
                 this.reader.Dispose();
 
             this.reader = new Mp3FileReader(filepath);
-            this.CurrentSong = new Song(filepath, reader.TotalTime, 1);
+            this.CurrentSong = new Song(filepath, reader.TotalTime);
             this.Playlist = new LinkedList<Song>();
             this.Playlist.AddLast(this.CurrentSong);
             this.waveOutDevice.Init(reader);
@@ -116,11 +116,9 @@ namespace AlphaPlayer.Helper_Classes
             this.Playlist = new LinkedList<Song>();
 
             string[] fileNames = Directory.GetFiles(path, "*.mp3");
-            int counter = 1;
             foreach (string fileName in fileNames)
             {
-                this.Playlist.AddLast(new Song(fileName, counter));
-                counter++;
+                this.Playlist.AddLast(new Song(fileName));
             }
 
             return this.Playlist.First.Value;
@@ -225,6 +223,22 @@ namespace AlphaPlayer.Helper_Classes
         {
             this.LoadFile(song);
             this.PlaySong();
+        }
+
+        public void AddSongToPlaylist(string filepath)
+        {
+            if (!this.IsFileSupported(filepath))
+                throw new InvalidDataException("Unsupported file");
+
+            // TODO: fix this shitty thing!
+            if (this.Playlist == null)
+                throw new InvalidOperationException("You cant drag and drop into empy playlist");
+
+            if (this.Playlist.Where(tempSong => tempSong.SongPath == filepath).Count() != 0)
+                throw new InvalidDataException("Song is already in playlist");
+
+            Song song = new Song(filepath);
+            this.Playlist.AddLast(song);
         }
     }
 }
