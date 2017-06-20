@@ -11,7 +11,11 @@
 * ~~Add songs using drag and drop when the playlist is empty.~~
 * Implement our exceptions such as: PlayerAlreadyPlayingException, NoPlaylistLoadedException, and more.
 * Fix the bug that happen when pressing next/previous to a broken/not real mp3 files.
+* Implement the infrastcructre for the REST API (Routes..).
 
 ### Issues
 * There is a race sometimes when clicking on the timing slider causing the song to be paused for some reason.
 * There is a crash caused by loading broken/not real mp3 files.
+* If the player is running as administrator (it should because of the server thats needs to run on 0.0.0.0) you can't drag and
+	drop files into the playlist because the two sides differ in user privilege.
+

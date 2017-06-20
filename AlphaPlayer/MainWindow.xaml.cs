@@ -111,8 +111,6 @@ namespace AlphaPlayer
                 this.SongTimeSlider.Value = 0;
             }
 
-            
-
             PlaylistListBox.ItemsSource = this.Player.GetPlaylistSongsNames();
             this.PlaylistListBox.SelectedItem = this.Player.CurrentSong.SongName;
 
