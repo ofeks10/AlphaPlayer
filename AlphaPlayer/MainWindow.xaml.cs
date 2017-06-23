@@ -142,6 +142,12 @@ namespace AlphaPlayer
             PlaylistListBox.ItemsSource = this.Player.GetPlaylistSongsNames();
 
             this.VolumeSlider.Value = this.Player.GetVolume() * 100f;
+
+            if (this.Player.Playlist != null)
+            {
+                dynamic item = this.BrowseButton.ContextMenu.Items[1];
+                item.IsEnabled = true;
+            }
         }
 
         // Runs every second, changes the current time label
@@ -338,6 +344,30 @@ namespace AlphaPlayer
 
             this.InitGUIAfterLoading();
             this.Player.PlaySong();
+        }
+
+        private void BrowseAddFile_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.DefaultExt = ".mp3";
+            dialog.Filter = "Music Files|*.mp3";
+
+            Nullable<bool> result = dialog.ShowDialog();
+
+            if (true == result)
+            {
+                try
+                {
+                    this.Player.AddSongToPlaylist(dialog.FileName);
+                }
+                catch (InvalidDataException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return;
+                }
+
+                this.InitGUIAfterLoading();
+            }
         }
     }
 }

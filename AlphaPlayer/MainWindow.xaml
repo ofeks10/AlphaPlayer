@@ -14,7 +14,8 @@
         <Button x:Name="BrowseButton" Content="Browse" HorizontalAlignment="Left" Margin="203,10,0,0" VerticalAlignment="Top" Width="66" Height="40" Click="BrowseButtonFile_Click">
             <Button.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Open file..." Click="BrowseButtonFile_Click"/>
+                    <MenuItem Header="Open single file..." Click="BrowseButtonFile_Click"/>
+                    <MenuItem IsEnabled="False" Header="Add file..." Click="BrowseAddFile_Click"/>
                     <MenuItem Header="Open folder..." Click="BrowseButtonFolder_Click"/>
                     <Separator />
                     <MenuItem Header="Exit" Click="ExitMenuItem_Click"/>
