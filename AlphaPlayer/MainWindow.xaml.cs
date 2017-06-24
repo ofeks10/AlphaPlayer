@@ -303,6 +303,8 @@ namespace AlphaPlayer
             try
             {
                 this.Player.PlaySpecificSong(song);
+                this.InitGUIAfterLoading();
+                this.aTimer.Enabled = true;
             }
             catch (InvalidDataException ex)
             {
