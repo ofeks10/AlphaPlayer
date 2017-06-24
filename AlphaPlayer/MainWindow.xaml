@@ -24,13 +24,13 @@
         </Button>
         <Slider x:Name="VolumeSlider" HorizontalAlignment="Left" Margin="286,26,0,0" VerticalAlignment="Top" Width="206" Maximum="100" ValueChanged="VolumeSlider_ValueChanged" Height="18"/>
         <Label x:Name="PlayingNowLabel" Content="Playing Now: " HorizontalAlignment="Left" Margin="12,78,0,0" VerticalAlignment="Top" Height="26" Width="82"/>
-        <Label x:Name="WhatsPlayingLabel" Content="Label" HorizontalAlignment="Left" Margin="94,78,0,0" VerticalAlignment="Top" Height="26" Width="436"/>
+        <Label x:Name="WhatsPlayingLabel" HorizontalAlignment="Left" Margin="94,78,0,0" VerticalAlignment="Top" Height="26" Width="436"/>
         <Slider x:Name="SongTimeSlider" HorizontalAlignment="Left" Margin="12,120,0,0" VerticalAlignment="Top" Width="409" Maximum="100" PreviewMouseUp="SongTimeSlider_PreviewMouseUp" PreviewMouseDown="SongTimeSlider_PreviewMouseDown" ValueChanged="SongTimeSlider_ValueChanged" Grid.ColumnSpan="2" Height="18"/>
         <Label x:Name="CurrentTimeLabel" Content="00:00:00" HorizontalAlignment="Left" Margin="424,116,0,0" VerticalAlignment="Top" Height="26" Width="54"/>
         <Label x:Name="SongTotalTimeLabel" Content="00:00:00" HorizontalAlignment="Left" Margin="486,116,0,0" VerticalAlignment="Top" Height="26" Width="54"/>
         <Label Content="/" HorizontalAlignment="Left" Margin="475,116,0,0" VerticalAlignment="Top" Height="26" Width="15"/>
         <Label x:Name="VolumePrecentageLabel" Content="50%" HorizontalAlignment="Left" Margin="494,22,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.108,-0.269" Height="26" Width="46"/>
         <ListBox x:Name="PlaylistListBox" HorizontalAlignment="Left" Height="179" Margin="12,184,0,0" VerticalAlignment="Top" Width="518" PreviewMouseDoubleClick="PlaylistListBox_PreviewMouseDoubleClick"/>
-        <Label Content="Playlist:" HorizontalAlignment="Left" Margin="12,153,0,0" VerticalAlignment="Top" Height="26" Width="49"/>
+        <Label Content="Queue:" HorizontalAlignment="Left" Margin="12,153,0,0" VerticalAlignment="Top" Height="26" Width="49"/>
     </Grid>
 </Window>

@@ -369,6 +369,7 @@ namespace AlphaPlayer
 
                 this.InitGUIAfterLoading();
                 this.Player.PlaySong();
+                this.aTimer.Enabled = true;
             }
         }
     }

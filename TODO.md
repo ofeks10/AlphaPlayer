@@ -12,6 +12,8 @@
 * Implement our exceptions such as: PlayerAlreadyPlayingException, NoPlaylistLoadedException, and more.
 * Fix the bug that happen when pressing next/previous to a broken/not real mp3 files.
 * Implement the infrastcructre for the REST API (Routes..).
+* Add playlists tabs, and a main tab that will show the current playlist.
+* 
 
 ### Issues
 * There is a race sometimes when clicking on the timing slider causing the song to be paused for some reason.
