@@ -49,7 +49,7 @@ namespace AlphaPlayer
             this.SongTimeSlider.IsEnabled = false;
             this.VolumeSlider.IsEnabled = false;
 
-            //this.PlaylistListBox.IsEnabled = false;
+            this.PlaylistListBox.IsEnabled = false;
         }
 
         private void BrowseButtonFile_Click(object sender, RoutedEventArgs e)
@@ -142,12 +142,6 @@ namespace AlphaPlayer
             PlaylistListBox.ItemsSource = this.Player.GetPlaylistSongsNames();
 
             this.VolumeSlider.Value = this.Player.GetVolume() * 100f;
-
-            if (this.Player.Playlist != null)
-            {
-                dynamic item = this.BrowseButton.ContextMenu.Items[1];
-                item.IsEnabled = true;
-            }
         }
 
         // Runs every second, changes the current time label
@@ -351,22 +345,28 @@ namespace AlphaPlayer
             Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
             dialog.DefaultExt = ".mp3";
             dialog.Filter = "Music Files|*.mp3";
+            dialog.Multiselect = true;
 
             Nullable<bool> result = dialog.ShowDialog();
 
             if (true == result)
             {
-                try
+                foreach (string file in dialog.FileNames)
                 {
-                    this.Player.AddSongToPlaylist(dialog.FileName);
-                }
-                catch (InvalidDataException ex)
-                {
-                    MessageBox.Show(ex.Message);
-                    return;
+
+                    try
+                    {
+                        this.Player.AddSongToPlaylist(file);
+                    }
+                    catch (InvalidDataException ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                        continue;
+                    }
                 }
 
                 this.InitGUIAfterLoading();
+                this.Player.PlaySong();
             }
         }
     }

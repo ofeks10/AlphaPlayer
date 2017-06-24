@@ -236,7 +236,7 @@ namespace AlphaPlayer.Helper_Classes
                 this.Playlist = new LinkedList<Song>();
 
             if (this.Playlist.Where(tempSong => tempSong.SongPath == filepath).Count() != 0)
-                throw new InvalidDataException("Song is already in playlist");
+                throw new InvalidDataException(filepath + " is already in playlist");
 
             Song song = new Song(filepath);
             this.Playlist.AddLast(song);

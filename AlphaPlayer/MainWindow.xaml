@@ -15,7 +15,7 @@
             <Button.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Open single file..." Click="BrowseButtonFile_Click"/>
-                    <MenuItem IsEnabled="False" Header="Add file..." Click="BrowseAddFile_Click"/>
+                    <MenuItem Header="Add files..." Click="BrowseAddFile_Click"/>
                     <MenuItem Header="Open folder..." Click="BrowseButtonFolder_Click"/>
                     <Separator />
                     <MenuItem Header="Exit" Click="ExitMenuItem_Click"/>
