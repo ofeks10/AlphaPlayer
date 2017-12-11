@@ -82,8 +82,23 @@ namespace AlphaPlayer.Helper_Classes
                 case "":
                     responseString = this.MainPage();
                     break;
+                case "SetVolume":
+                    string vol_str = request.QueryString["volume"];
+                    int Volume;
+
+                    if(!int.TryParse(vol_str, out Volume))
+                    {
+                        responseString = "Invalid volume " + vol_str;
+                        response.StatusCode = 403;
+                    }
+                    else
+                    {
+                        this.Player.SetVolume(Volume);
+                    }
+                    break;
                 case "GetName":
-                    responseString = this.Player.CurrentSong.SongName;
+                    if(this.Player.CurrentSong != null)
+                        responseString = this.Player.CurrentSong.SongName;
                     break;
                 case "GetTime":
                     responseString = this.Player.GetCurrentTime().ToString();
