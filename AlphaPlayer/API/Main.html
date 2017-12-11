@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Now playing - </title>
+    <meta charset='utf-8' />
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript">
+            $(document).ready(function () {
+                $('#play').on('click', function () {
+                    $.get("/Play");
+                });
+
+                $('#pause').on('click', function () {
+                    $.get("/Pause");
+                });
+
+                $('#next').on('click', function () {
+                    $.get("/Next");
+
+                    $.get("/GetName", function (data) {
+                        $("#now-playing").html(data);
+                    });
+                });
+
+                setInterval(function () {
+                    $.get("/GetName", function (data) {
+                        $("#now-playing").html(data);
+                    });
+                }, 1000);
+            });
+    </script>
+</head>
+    <body>
+        <p>Now Playing: <span id='now-playing'></span></p>
+        <button id='play'>Play</button>
+        <button id='pause'>Pause</button>
+        <button id='next'>Next</button>
+    </body>
+</html>

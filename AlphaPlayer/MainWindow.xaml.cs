@@ -33,11 +33,26 @@ namespace AlphaPlayer
             InitializeComponent();
 
             this.Player = new Player();
-            this.Api = new PlayerAPI(8080, this.Player);
 
-            // Create and start the api thread
-            this.ApiThread = new Thread(new ThreadStart(this.Api.Start));
-            this.ApiThread.Start();
+            try
+            {
+                this.Api = new PlayerAPI(8080, this.Player);
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBoxResult result = System.Windows.MessageBox.Show("AlphaPlayer is currently not running as administrator.\nYou have 2 options, to close AlphaPlayer and open it as Admin or bind the API only to localhost.\nChoose OK to bind as localhost and cancel to not bind the API at all.", "Delete", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+                if (result.Equals(MessageBoxResult.OK))
+                {
+                    this.Api = new PlayerAPI(8080, this.Player, false);
+                }
+            }
+
+            if (this.Api != null)
+            {
+                // Create and start the api thread
+                this.ApiThread = new Thread(new ThreadStart(this.Api.Start));
+                this.ApiThread.Start();
+            }
 
             // Initialize The Timer
             this.InitializeTimer();
@@ -275,8 +290,12 @@ namespace AlphaPlayer
 
         private void Exit()
         {
-            this.Api.Stop();
-            this.ApiThread.Abort();
+            if (this.Api != null)
+            {
+                this.Api.Stop();
+                this.ApiThread.Abort();
+            }
+
             System.Windows.Application.Current.Shutdown();
             Environment.Exit(0);
         }
