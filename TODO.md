@@ -16,10 +16,13 @@
 * Find a better way to run the WEB API, it currently using AJAX.
 * Add songs through Youtube, and not only files.
 * Add current time and song time in the web (`http://localhost:8080/GetTime`)
+* Need to find a way to handle API crashed, its partially implemented in PlayerAPI.ExceptionHandler -> this function catches all the API Exceptions.
 
 ### Issues
 * There is a race sometimes when clicking on the timing slider causing the song to be paused for some reason.
 * There is a crash caused by loading broken/not real mp3 files.
+* Crash when port is used.
+* Config relative path is not working.
 * ~~If the player is running as administrator (it should because of the server thats needs to run on 0.0.0.0) you can't drag and
 	drop files into the playlist because the two sides differ in user privilege.~~ (Fixed it using message box the calrify it)
 * ~~Volume through web is not working, god knows why~~
