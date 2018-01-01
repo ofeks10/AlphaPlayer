@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AlphaPlayer.Helper_Classes
 {
@@ -9,35 +12,141 @@ namespace AlphaPlayer.Helper_Classes
         private HttpListener HttpListener;
         private Player Player;
 
+        static bool KeepGoing = true;
+        static List<Task> OngoingTasks = new List<Task>();
+
+        string InterfaceName;
+
+        string MainFilePath = "../../API/Main.html";
+
         private Dictionary<string, Delegate> Routes;
 
-        public PlayerAPI(int port, Player player)
+        public PlayerAPI(int port, Player player, bool AllInterfaces = true)
         {
             this.HttpListener = new HttpListener();
-            this.HttpListener.Prefixes.Add("http://localhost:" + port + "/");
+
+            if (AllInterfaces && !General_Helper.IsAdministrator())
+                throw new InvalidOperationException();
+            else if (AllInterfaces && General_Helper.IsAdministrator())
+                this.InterfaceName = "*";
+            else if (!AllInterfaces)
+                this.InterfaceName = "localhost";
+
+            this.HttpListener.Prefixes.Add(String.Format("http://{0}:{1}/", InterfaceName, port));
+
             this.Player = player;
         }
 
         public void Start()
         {
             HttpListener.Start();
-            this.MainLoop();
+            ProcessAsync(HttpListener).ContinueWith(async task => {
+
+                await Task.WhenAll(OngoingTasks.ToArray());
+            });
         }
 
-        public void MainLoop()
+        async Task ProcessAsync(HttpListener listener)
         {
-            while (true)
+            while (KeepGoing)
             {
-                var context = HttpListener.GetContext();
-                var response = context.Response;
-                const string responseString = "<html><body>Hello world</body></html>";
-                var buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-                response.ContentLength64 = buffer.Length;
-                var output = response.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
-                output.Close();
-                this.Player.SetVolume(1);
+                HttpListenerContext context = await listener.GetContextAsync();
+                await this.HandleRequestAsync(context);
             }
+        }
+
+        async Task HandleRequestAsync(HttpListenerContext context)
+        {
+            await Task.Delay(5);
+            this.Perform(context);
+        }
+
+        string MainPage()
+        {
+            string MainFile = File.ReadAllText(this.MainFilePath);
+
+            return MainFile;
+        }
+
+        void Perform(HttpListenerContext ctx)
+        {
+
+            HttpListenerResponse response = ctx.Response;
+            HttpListenerRequest request = ctx.Request;
+
+            string uri = request.Url.AbsolutePath.Substring(1);
+            string responseString = "";
+
+            switch (uri)
+            {
+                case "":
+                    responseString = this.MainPage();
+                    break;
+                case "SetVolume":
+                    string vol_str = request.QueryString["volume"];
+                    int Volume;
+
+                    if(!int.TryParse(vol_str, out Volume))
+                    {
+                        responseString = "Invalid volume " + vol_str;
+                        response.StatusCode = 403;
+                    }
+                    else
+                    {
+                        this.Player.SetVolume(Volume);
+                    }
+                    break;
+                case "GetName":
+                    if(this.Player.CurrentSong != null)
+                        responseString = this.Player.CurrentSong.SongName;
+                    break;
+                case "GetTime":
+                    responseString = this.Player.GetCurrentTime().ToString();
+                    break;
+                case "Pause":
+                    Player.StopSong();
+                    break;
+                case "Play":
+                    try
+                    {
+                        this.Player.PlaySong();
+                        responseString = "Played";
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        responseString = ex.Message;
+                    }
+                    break;
+                case "Next":
+                    try
+                    {
+                        this.Player.PlayNextSong();
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        
+                    }
+                    catch (InvalidDataException)
+                    {
+                        
+                    }
+                    break;
+                default:
+                    responseString = "404";
+                    response.StatusCode = 404;
+                    break;
+            }
+            
+            byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+
+            // Get a response stream and write the response to it.
+            response.ContentEncoding = Encoding.UTF8;
+            response.ContentLength64 = buffer.Length;
+            Stream output = response.OutputStream;
+            output.Write(buffer, 0, buffer.Length);
+
+            // You must close the output stream.
+            output.Close();
         }
 
         public void Stop()

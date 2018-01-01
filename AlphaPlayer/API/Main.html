@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Now playing - </title>
+    <meta charset='utf-8' />
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/bootstrap-slider.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/css/bootstrap-slider.min.css" />
+    <script type="text/javascript">
+        $(document).ready(function () {
+                // With JQuery
+                var originalVal;
+                
+                $('#ex1').slider({
+                    formatter: function (value) {
+                        $("#precentage").html(value);
+                    }
+                });
+
+                $('#ex1').slider().on('slideStart', function (ev) {
+                    originalVal = $('#ex1').data('slider').getValue();
+                });
+
+                $('#ex1').slider().on('slideStop', function (ev) {
+                    var newVal = $('#ex1').data('slider').getValue();
+                    if (originalVal != newVal) {
+                        $.post({
+                            url: "/SetVolume",
+                            data: {volume: newVal}
+                        })
+                    }
+                });
+
+                $('#play').on('click', function () {
+                    $.get("/Play");
+                });
+
+                $('#pause').on('click', function () {
+                    $.get("/Pause");
+                });
+
+                $('#next').on('click', function () {
+                    $.get("/Next");
+
+                    $.get("/GetName", function (data) {
+                        $("#now-playing").html(data);
+                    });
+                });
+
+                setInterval(function () {
+                    $.get("/GetName", function (data) {
+                        $("#now-playing").html(data);
+                    });
+                }, 1000);
+            });
+    </script>
+</head>
+<body>
+    <p>Now Playing: <span id='now-playing'></span></p>
+    <button id='play'>Play</button>
+    <button id='pause'>Pause</button>
+    <button id='next'>Next</button><br /><br />
+    <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="14" /> <span id="precentage"></span>
+</body>
+</html>
