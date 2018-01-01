@@ -314,7 +314,6 @@ namespace AlphaPlayer
             if (this.Api != null)
             {
                 this.Api.Stop();
-                this.ApiThread.Abort();
             }
 
             System.Windows.Application.Current.Shutdown();
