@@ -15,6 +15,7 @@
 * Implement drag and drop to reorder the queue.
 * Find a better way to run the WEB API, it currently using AJAX.
 * Add songs through Youtube, and not only files.
+* Add current time and song time in the web (`http://localhost:8080/GetTime`)
 
 ### Issues
 * There is a race sometimes when clicking on the timing slider causing the song to be paused for some reason.
