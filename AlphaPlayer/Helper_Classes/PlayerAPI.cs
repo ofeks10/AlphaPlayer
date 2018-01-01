@@ -64,37 +64,44 @@ namespace AlphaPlayer.Helper_Classes
         string MainPage()
         {
             string MainFile = File.ReadAllText(this.MainFilePath);
-
             return MainFile;
         }
 
         void Perform(HttpListenerContext ctx)
         {
-
             HttpListenerResponse response = ctx.Response;
             HttpListenerRequest request = ctx.Request;
 
             string uri = request.Url.AbsolutePath.Substring(1);
             string responseString = "";
 
-            switch (uri)
+            if(uri.Contains("SetVolume"))
             {
-                case "":
-                    responseString = this.MainPage();
-                    break;
-                case "SetVolume":
-                    string vol_str = request.QueryString["volume"];
+                string[] volume_arr = uri.Split('/');
+                if(volume_arr.Length >= 2)
+                {
+                    string vol_str = volume_arr[1];
                     int Volume;
 
-                    if(!int.TryParse(vol_str, out Volume))
+                    if (!int.TryParse(vol_str, out Volume))
                     {
                         responseString = "Invalid volume " + vol_str;
                         response.StatusCode = 403;
                     }
                     else
                     {
-                        this.Player.SetVolume(Volume);
+                        this.Player.SetVolume((float)Volume / 100.0f);
                     }
+                }
+            }
+
+            switch (uri)
+            {
+                case "":
+                    responseString = this.MainPage();
+                    break;
+                case "GetVolume":
+                    responseString = "" + Math.Floor(this.Player.GetVolume() * 100);
                     break;
                 case "GetName":
                     if(this.Player.CurrentSong != null)
