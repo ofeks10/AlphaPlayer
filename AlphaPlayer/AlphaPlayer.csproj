@@ -72,6 +72,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Helper_Classes\Config.cs" />
     <Compile Include="Helper_Classes\PlayerAPI.cs" />
     <Compile Include="Helper_Classes\General_Helper.cs" />
     <Compile Include="Helper_Classes\Player.cs" />

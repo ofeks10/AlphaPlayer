@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace AlphaPlayer.Helper_Classes
 {
@@ -17,11 +18,11 @@ namespace AlphaPlayer.Helper_Classes
 
         string InterfaceName;
 
-        string MainFilePath = "../../API/Main.html";
+        string MainFilePath = "API/Main.html";
 
-        private Dictionary<string, Delegate> Routes;
+        int TryCount = 0;
 
-        public PlayerAPI(int port, Player player, bool AllInterfaces = true)
+        public PlayerAPI(int port, Player player, string WebFilesPath, bool AllInterfaces = true)
         {
             this.HttpListener = new HttpListener();
 
@@ -41,9 +42,13 @@ namespace AlphaPlayer.Helper_Classes
         {
             HttpListener.Start();
             ProcessAsync(HttpListener).ContinueWith(async task => {
-
                 await Task.WhenAll(OngoingTasks.ToArray());
             });
+        }
+
+        public void ExceptionHandler(Task task)
+        {
+            throw new NotImplementedException();
         }
 
         async Task ProcessAsync(HttpListener listener)

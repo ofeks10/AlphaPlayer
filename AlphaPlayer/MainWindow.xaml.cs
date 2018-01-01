@@ -5,6 +5,7 @@ using System.Windows.Input;
 using AlphaPlayer.Helper_Classes;
 using System.Threading;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace AlphaPlayer
 {
@@ -16,6 +17,7 @@ namespace AlphaPlayer
         private bool IsMouseDownOnSongTimeSlider = false;
 
         private Thread ApiThread;
+        private Task ApiTask;
 
         private void InitializeTimer()
         {
@@ -33,25 +35,44 @@ namespace AlphaPlayer
             InitializeComponent();
 
             this.Player = new Player();
+            
+            try
+            {
+                Config.Parse();
+            } catch(FileNotFoundException)
+            {
+                MessageBox.Show("The \"config.ini\" file cannot be found");
+                this.Exit();
+            }
+            catch(InvalidDataException ex)
+            {
+                MessageBox.Show(ex.Message);
+                this.Exit();
+            }
 
             try
             {
-                this.Api = new PlayerAPI(8080, this.Player);
+                this.Api = new PlayerAPI(Config.WebPort, this.Player, Config.WebFilesRelativePath);
             }
             catch (InvalidOperationException)
             {
                 MessageBoxResult result = System.Windows.MessageBox.Show("AlphaPlayer is currently not running as administrator.\nYou have 2 options, to close AlphaPlayer and open it as Admin or bind the API only to localhost.\nChoose OK to bind as localhost and cancel to not bind the API at all.", "Delete", MessageBoxButton.OKCancel, MessageBoxImage.Information);
                 if (result.Equals(MessageBoxResult.OK))
                 {
-                    this.Api = new PlayerAPI(8080, this.Player, false);
+                    this.Api = new PlayerAPI(8080, this.Player, Config.WebFilesRelativePath, false);
                 }
             }
 
             if (this.Api != null)
             {
-                // Create and start the api thread
-                this.ApiThread = new Thread(new ThreadStart(this.Api.Start));
-                this.ApiThread.Start();
+
+                // Create the api task
+                this.ApiTask = new Task(this.Api.Start);
+
+                // Set excpetion handler in case the task failed
+                this.ApiTask.ContinueWith(this.Api.ExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
+
+                this.ApiTask.Start();
             }
 
             // Initialize The Timer
