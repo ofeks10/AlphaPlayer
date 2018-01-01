@@ -124,6 +124,20 @@ namespace AlphaPlayer.Helper_Classes
                         responseString = ex.Message;
                     }
                     break;
+                case "Previous":
+                    try
+                    {
+                        this.Player.PlayPreviousSong();
+                    }
+                    catch (InvalidOperationException)
+                    {
+
+                    }
+                    catch (InvalidDataException)
+                    {
+
+                    }
+                    break;
                 case "Next":
                     try
                     {
