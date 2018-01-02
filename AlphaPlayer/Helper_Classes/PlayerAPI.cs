@@ -83,6 +83,7 @@ namespace AlphaPlayer.Helper_Classes
 
             string uri = request.Url.AbsolutePath.Substring(1);
             string responseString = "";
+            response.StatusCode = 200;
 
             if(uri.Contains("SetVolume"))
             {
@@ -162,8 +163,16 @@ namespace AlphaPlayer.Helper_Classes
                     }
                     break;
                 default:
-                    responseString = "404";
-                    response.StatusCode = 404;
+                    if(File.Exists(this.WebFilesPath + "\\" + uri))
+                    {
+                        string contents = File.ReadAllText(this.WebFilesPath + "\\" + uri);
+                        responseString = contents;
+                    }
+                    else
+                    {
+                        responseString = "404";
+                        response.StatusCode = 404;
+                    }
                     break;
             }
             
