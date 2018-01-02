@@ -11,6 +11,7 @@ namespace AlphaPlayer.Helper_Classes
     { 
         public static int WebPort = 8080;
         public static string WebFilesRelativePath;
+        public static bool IsAPI = false;
 
         public static void Parse()
         {
@@ -27,6 +28,14 @@ namespace AlphaPlayer.Helper_Classes
 
                 switch(configLineParts[0])
                 {
+                    case "api":
+                        string option = configLineParts[1];
+
+                        if (!bool.TryParse(option, out bool IsAPI))
+                            continue;
+
+                        Config.IsAPI = IsAPI;
+                        break;
                     case "port":
                         string strPort = configLineParts[1];
 
@@ -37,6 +46,9 @@ namespace AlphaPlayer.Helper_Classes
                         break;
 
                     case "web_files_relative_path":
+                        if (!Config.IsAPI)
+                            continue;
+
                         string path = configLineParts[1];
 
                         if (!File.Exists(Directory.GetCurrentDirectory() + "\\" + path + "\\Main.html"))
@@ -49,7 +61,7 @@ namespace AlphaPlayer.Helper_Classes
                 }
             }
 
-            if (Config.WebFilesRelativePath == null)
+            if (Config.WebFilesRelativePath == null && Config.IsAPI)
                 throw new InvalidDataException("No API path specified");
         }
     }

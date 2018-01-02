@@ -49,16 +49,19 @@ namespace AlphaPlayer
                 this.Exit();
             }
 
-            try
+            if (Config.IsAPI)
             {
-                this.Api = new PlayerAPI(Config.WebPort, this.Player, Config.WebFilesRelativePath);
-            }
-            catch (InvalidOperationException)
-            {
-                MessageBoxResult result = MessageBox.Show("AlphaPlayer is currently not running as administrator.\nYou have 2 options, to close AlphaPlayer and open it as Admin or bind the API only to localhost.\nChoose OK to bind as localhost and cancel to not bind the API at all.", "Info", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-                if (result.Equals(MessageBoxResult.OK))
+                try
                 {
-                    this.Api = new PlayerAPI(8080, this.Player, Config.WebFilesRelativePath, false);
+                    this.Api = new PlayerAPI(Config.WebPort, this.Player, Config.WebFilesRelativePath);
+                }
+                catch (InvalidOperationException)
+                {
+                    MessageBoxResult result = MessageBox.Show("AlphaPlayer is currently not running as administrator.\nYou have 2 options, to close AlphaPlayer and open it as Admin or bind the API only to localhost.\nChoose OK to bind as localhost and cancel to not bind the API at all.", "Info", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+                    if (result.Equals(MessageBoxResult.OK))
+                    {
+                        this.Api = new PlayerAPI(8080, this.Player, Config.WebFilesRelativePath, false);
+                    }
                 }
             }
 
@@ -79,7 +82,11 @@ namespace AlphaPlayer
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("API crashed");
+                    MessageBoxResult result = MessageBox.Show("API crahsed, probably because the port is used.\n Press OK to not bind the API and Cancel to exit.", "Error", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                    if(result.Equals(MessageBoxResult.Cancel))
+                    {
+                        this.Exit();
+                    }
                 }
             }
 
