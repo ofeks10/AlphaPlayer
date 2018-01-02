@@ -60,7 +60,7 @@ namespace AlphaPlayer
                     MessageBoxResult result = MessageBox.Show("AlphaPlayer is currently not running as administrator.\nYou have 2 options, to close AlphaPlayer and open it as Admin or bind the API only to localhost.\nChoose OK to bind as localhost and cancel to not bind the API at all.", "Info", MessageBoxButton.OKCancel, MessageBoxImage.Information);
                     if (result.Equals(MessageBoxResult.OK))
                     {
-                        this.Api = new PlayerAPI(8080, this.Player, Config.WebFilesRelativePath, false);
+                        this.Api = new PlayerAPI(Config.WebPort, this.Player, Config.WebFilesRelativePath, false);
                     }
                 }
             }
