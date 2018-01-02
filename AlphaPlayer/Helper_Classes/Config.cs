@@ -39,7 +39,7 @@ namespace AlphaPlayer.Helper_Classes
                     case "web_files_relative_path":
                         string path = configLineParts[1];
 
-                        if (!File.Exists(Directory.GetCurrentDirectory() + "/" + path + "/Main.html"))
+                        if (!File.Exists(Directory.GetCurrentDirectory() + "\\" + path + "\\Main.html"))
                             throw new InvalidDataException("Invalid API path");
 
                         Config.WebFilesRelativePath = path;

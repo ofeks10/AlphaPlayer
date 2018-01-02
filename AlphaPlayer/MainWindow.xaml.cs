@@ -46,7 +46,7 @@ namespace AlphaPlayer
             }
             catch(InvalidDataException ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.Exit();
             }
 
@@ -56,7 +56,7 @@ namespace AlphaPlayer
             }
             catch (InvalidOperationException)
             {
-                MessageBoxResult result = System.Windows.MessageBox.Show("AlphaPlayer is currently not running as administrator.\nYou have 2 options, to close AlphaPlayer and open it as Admin or bind the API only to localhost.\nChoose OK to bind as localhost and cancel to not bind the API at all.", "Delete", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+                MessageBoxResult result = MessageBox.Show("AlphaPlayer is currently not running as administrator.\nYou have 2 options, to close AlphaPlayer and open it as Admin or bind the API only to localhost.\nChoose OK to bind as localhost and cancel to not bind the API at all.", "Info", MessageBoxButton.OKCancel, MessageBoxImage.Information);
                 if (result.Equals(MessageBoxResult.OK))
                 {
                     this.Api = new PlayerAPI(8080, this.Player, Config.WebFilesRelativePath, false);

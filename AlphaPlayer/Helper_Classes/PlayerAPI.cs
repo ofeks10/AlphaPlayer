@@ -18,13 +18,12 @@ namespace AlphaPlayer.Helper_Classes
 
         string InterfaceName;
 
-        string MainFilePath = "API/Main.html";
-
-        int TryCount = 0;
+        string WebFilesPath;
 
         public PlayerAPI(int port, Player player, string WebFilesPath, bool AllInterfaces = true)
         {
             this.HttpListener = new HttpListener();
+            this.WebFilesPath = WebFilesPath;
 
             if (AllInterfaces && !General_Helper.IsAdministrator())
                 throw new InvalidOperationException();
@@ -68,7 +67,7 @@ namespace AlphaPlayer.Helper_Classes
 
         string MainPage()
         {
-            string MainFile = File.ReadAllText(this.MainFilePath);
+            string MainFile = File.ReadAllText(this.WebFilesPath + "/Main.html");
             return MainFile;
         }
 
