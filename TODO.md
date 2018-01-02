@@ -19,7 +19,7 @@
 * ~~Need to find a way to handle API crashed, its partially implemented in PlayerAPI.ExceptionHandler -> this function catches all the API Exceptions.~~
 
 ### Issues
-* There is a race sometimes when clicking on the timing slider causing the song to be paused for some reason.
+* ~~There is a race sometimes when clicking on the timing slider causing the song to be paused for some reason.~~
 * ~~There is a crash caused by loading broken/not real mp3 files.~~
 * ~~Crash when port is used.~~
 * ~~Config relative path is not working.~~
