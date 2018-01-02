@@ -16,8 +16,9 @@ namespace AlphaPlayer.Helper_Classes
         static bool KeepGoing = true;
         static List<Task> OngoingTasks = new List<Task>();
 
-        string InterfaceName;
+        public int CrashesHappend = 0;
 
+        string InterfaceName;
         string WebFilesPath;
 
         public PlayerAPI(int port, Player player, string WebFilesPath, bool AllInterfaces = true)
@@ -45,11 +46,6 @@ namespace AlphaPlayer.Helper_Classes
             });
         }
 
-        public void ExceptionHandler(Task task)
-        {
-            throw new NotImplementedException();
-        }
-
         async Task ProcessAsync(HttpListener listener)
         {
             while (KeepGoing)
@@ -61,8 +57,17 @@ namespace AlphaPlayer.Helper_Classes
 
         async Task HandleRequestAsync(HttpListenerContext context)
         {
-            await Task.Delay(5);
-            this.Perform(context);
+            await Task.Delay(1);
+            try
+            {
+                this.Perform(context);
+            }
+            catch (Exception)
+            {
+                // We don't really have a way to handle this crash, just ignore it and move to the next request.
+                // This is only here to prevent the API from crashing.
+                this.CrashesHappend += 1;
+            }
         }
 
         string MainPage()
@@ -176,7 +181,8 @@ namespace AlphaPlayer.Helper_Classes
 
         public void Stop()
         {
-            this.HttpListener.Stop();
+            if(this.HttpListener.IsListening)
+                this.HttpListener.Stop();
         }
     }
 }

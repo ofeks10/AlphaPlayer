@@ -16,7 +16,6 @@ namespace AlphaPlayer
         private PlayerAPI Api;
         private bool IsMouseDownOnSongTimeSlider = false;
 
-        private Thread ApiThread;
         private Task ApiTask;
 
         private void InitializeTimer()
@@ -69,10 +68,19 @@ namespace AlphaPlayer
                 // Create the api task
                 this.ApiTask = new Task(this.Api.Start);
 
-                // Set excpetion handler in case the task failed
-                this.ApiTask.ContinueWith(this.Api.ExceptionHandler, TaskContinuationOptions.OnlyOnFaulted);
-
                 this.ApiTask.Start();
+
+                // Only catch exceptions that happend synchronous
+                // Exceptions that happend during asynchronous function will be catched and handled inside the API itself.
+                // The number of crashes occured is in 'PlayerAPI.CrashedHappend'
+                try
+                {
+                    this.ApiTask.Wait();
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("API crashed");
+                }
             }
 
             // Initialize The Timer
@@ -90,10 +98,11 @@ namespace AlphaPlayer
 
         private void BrowseButtonFile_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
-            dialog.DefaultExt = ".mp3";
-            dialog.Filter = "Music Files|*.mp3";
-
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog()
+            {
+                DefaultExt = ".mp3",
+                Filter = "Music Files|*.mp3"
+            };
             Nullable<bool> result = dialog.ShowDialog();
 
             if (true == result)
@@ -383,11 +392,12 @@ namespace AlphaPlayer
 
         private void BrowseAddFile_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
-            dialog.DefaultExt = ".mp3";
-            dialog.Filter = "Music Files|*.mp3";
-            dialog.Multiselect = true;
-
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog()
+            {
+                DefaultExt = ".mp3",
+                Filter = "Music Files|*.mp3",
+                Multiselect = true
+            };
             Nullable<bool> result = dialog.ShowDialog();
 
             if (true == result)
