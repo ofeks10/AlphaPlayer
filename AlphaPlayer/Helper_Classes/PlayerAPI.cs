@@ -4,7 +4,6 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace AlphaPlayer.Helper_Classes
 {
@@ -62,7 +61,7 @@ namespace AlphaPlayer.Helper_Classes
             {
                 this.Perform(context);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // We don't really have a way to handle this crash, just ignore it and move to the next request.
                 // This is only here to prevent the API from crashing.
@@ -85,10 +84,10 @@ namespace AlphaPlayer.Helper_Classes
             string responseString = "";
             response.StatusCode = 200;
 
-            if(uri.Contains("SetVolume"))
+            if (uri.Contains("SetVolume"))
             {
                 string[] volume_arr = uri.Split('/');
-                if(volume_arr.Length >= 2)
+                if (volume_arr.Length >= 2)
                 {
                     string vol_str = volume_arr[1];
                     int Volume;
@@ -104,76 +103,48 @@ namespace AlphaPlayer.Helper_Classes
                     }
                 }
             }
-
-            switch (uri)
+            else
             {
-                case "":
-                    responseString = this.MainPage();
-                    break;
-                case "GetVolume":
-                    responseString = "" + Math.Floor(this.Player.GetVolume() * 100);
-                    break;
-                case "GetName":
-                    if(this.Player.CurrentSong != null)
-                        responseString = this.Player.CurrentSong.SongName;
-                    break;
-                case "GetTime":
-                    responseString = this.Player.GetCurrentTime().ToString();
-                    break;
-                case "Pause":
-                    Player.StopSong();
-                    break;
-                case "Play":
-                    try
-                    {
+                switch (uri)
+                {
+                    case "":
+                        responseString = this.MainPage();
+                        break;
+                    case "GetData":
+                        responseString = General_Helper.DictToJSON(new Dictionary<string, object>() {
+                            { "volume", Math.Floor(this.Player.GetVolume() * 100)},
+                            { "song_name", this.Player.GetCurrentSongName() },
+                            { "current_time",  this.Player.GetCurrentTime().ToString()}
+                        });
+
+                        response.ContentType = "application/json";
+                        break;
+                    case "Pause":
+                        Player.StopSong();
+                        break;
+                    case "Play":
                         this.Player.PlaySong();
                         responseString = "Played";
-                    }
-                    catch (InvalidOperationException ex)
-                    {
-                        responseString = ex.Message;
-                    }
-                    break;
-                case "Previous":
-                    try
-                    {
+                        break;
+                    case "Previous":
                         this.Player.PlayPreviousSong();
-                    }
-                    catch (InvalidOperationException)
-                    {
-
-                    }
-                    catch (InvalidDataException)
-                    {
-
-                    }
-                    break;
-                case "Next":
-                    try
-                    {
+                        break;
+                    case "Next":
                         this.Player.PlayNextSong();
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        
-                    }
-                    catch (InvalidDataException)
-                    {
-                        
-                    }
-                    break;
-                default:
-                    if(File.Exists(this.WebFilesPath + "\\" + uri))
-                    {
-                        string contents = File.ReadAllText(this.WebFilesPath + "\\" + uri);
-                        responseString = contents;
-                    }
-                    else
-                    {
-                        responseString = "404";
-                        response.StatusCode = 404;
-                    }
-                    break;
+                        break;
+                    default:
+                        if (File.Exists(this.WebFilesPath + "\\" + uri))
+                        {
+                            string contents = File.ReadAllText(this.WebFilesPath + "\\" + uri);
+                            responseString = contents;
+                        }
+                        else
+                        {
+                            responseString = "404";
+                            response.StatusCode = 404;
+                        }
+                        break;
+                }
             }
             
             byte[] buffer = Encoding.UTF8.GetBytes(responseString);

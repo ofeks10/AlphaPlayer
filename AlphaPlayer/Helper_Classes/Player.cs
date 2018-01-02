@@ -89,6 +89,14 @@ namespace AlphaPlayer.Helper_Classes
             return this.waveOutDevice.PlaybackState == PlaybackState.Playing;
         }
 
+        public string GetCurrentSongName()
+        {
+            if (this.CurrentSong != null)
+                return this.CurrentSong.SongName;
+            else
+                return null;
+        }
+
         public void PlaySong()
         {
             if (!this.IsSongLoaded())
@@ -131,7 +139,10 @@ namespace AlphaPlayer.Helper_Classes
 
         public TimeSpan GetCurrentTime()
         {
-            return this.reader.CurrentTime;
+            if (this.reader != null)
+                return this.reader.CurrentTime;
+            else
+                return TimeSpan.Zero;
         }
 
         public void SetCurrentTime(TimeSpan currentTime)

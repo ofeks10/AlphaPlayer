@@ -1,48 +1,52 @@
 $(document).ready(function () {
-	var originalVal;
-	
-	$('#ex1').slider({
-		formatter: function (value) {
-			$("#precentage").html(value);
-		}
-	});
+    var originalVal;
+    var IsWhileChangingSound;
 
-	$('#ex1').slider().on('slideStart', function (ev) {
-		originalVal = $('#ex1').data('slider').getValue();
-	});
+    $('#ex1').slider({
+	    formatter: function (value) {
+		    $("#precentage").html(value);
+	    }
+    });
 
-	$('#ex1').slider().on('slideStop', function (ev) {
-		var newVal = $('#ex1').data('slider').getValue();
-		if (originalVal != newVal) {
-			$.get("/SetVolume/" + newVal);
-		}
-	});
+    $('#ex1').slider().on('slideStart', function (ev) {
+        originalVal = $('#ex1').data('slider').getValue();
+        IsWhileChangingSound = true;
+    });
 
-	$('#play').on('click', function () {
-		$.get("/Play");
-	});
+    $('#ex1').slider().on('slideStop', function (ev) {
+	    var newVal = $('#ex1').data('slider').getValue();
+	    if (originalVal != newVal) {
+		    $.get("/SetVolume/" + newVal);
+        }
 
-	$('#pause').on('click', function () {
-		$.get("/Pause");
-	});
+        IsWhileChangingSound = false;
+    });
 
-	$('#next').on('click', function () {
-		$.get("/Next");
-	});
+    $('#play').on('click', function () {
+	    $.get("/Play");
+    });
 
-	$('#prev').on('click', function () {
-		$.get("/Previous");
-	});
+    $('#pause').on('click', function () {
+	    $.get("/Pause");
+    });
 
-	setInterval(function () {
-		$.get("/GetName", function (data) {
-			$("#now-playing").html(data);
-			$("title").html("Now playing - " + data);
-		});
+    $('#next').on('click', function () {
+	    $.get("/Next");
+    });
 
-		$.get("/GetVolume", function (data) {
-			$("#precentage").html(data);
-			$('#ex1').slider('setValue', data);
-		});
-	}, 1000);
+    $('#prev').on('click', function () {
+	    $.get("/Previous");
+    });
+
+    setInterval(function () {
+        $.get("/GetData", function (data) {
+            $("#now-playing").html(data["song_name"]);
+            $("title").html("Now playing - " + data["song_name"]);
+
+            if (!IsWhileChangingSound) {
+                $("#precentage").html(data["volume"]);
+                $('#ex1').slider('setValue', data["volume"]);
+            }
+        });
+    }, 600);
 });
