@@ -40,8 +40,7 @@ namespace AlphaPlayer
                 Config.Parse();
             } catch(FileNotFoundException)
             {
-                MessageBox.Show("The \"config.ini\" file cannot be found");
-                this.Exit();
+                MessageBox.Show("The \"config.ini\" file cannot be found, so the API is not going to work.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch(InvalidDataException ex)
             {
