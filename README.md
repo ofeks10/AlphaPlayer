@@ -5,5 +5,6 @@ In order to start the API you need to create a `config.ini` file in the AlphaPla
 You can change those options:
 * `api=true/false` - Set the API to on or off
 * `port=1337` - Set the API port (Optional, default is 8080)
+* `web_sock_port=1338` - the web sockets server port (Optional, default is 8081)
 * `web_files_relative_path=API/` - Tells to AlphaPlayer where is the API files are (Required if the API is on)
 
