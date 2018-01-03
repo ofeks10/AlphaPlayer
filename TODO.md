@@ -14,7 +14,7 @@
 * Add implementation for songs that are not mp3.
 * Add a column of duration to each song in the playlist ListBox.
 * Implement drag and drop to reorder the queue.
-* Find a better way to run the WEB API, it currently using AJAX (Set up an WebSockets server that will talk with the client)
+* ~~Find a better way to run the WEB API, it currently using AJAX (Set up an WebSockets server that will talk with the client)~~
 * Add songs through Youtube, and not only files.
 * Add current time and song time in the web (`http://localhost:8080/GetTime`)
 
@@ -26,4 +26,4 @@
 * ~~If the player is running as administrator (it should because of the server thats needs to run on 0.0.0.0) you can't drag and
 	drop files into the playlist because the two sides differ in user privilege.~~ (Fixed it using message box the calrify it)
 * ~~Volume through web is not working, god knows why~~
-* Its very easy to DDOS the server, because of the AJAX requests coming.
+* ~~Its very easy to DDOS the server, because of the AJAX requests coming.~~

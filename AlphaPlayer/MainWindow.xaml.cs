@@ -16,7 +16,10 @@ namespace AlphaPlayer
         private PlayerAPI Api;
         private bool IsMouseDownOnSongTimeSlider = false;
 
+        private PlayerWebSocketsServer WebSocketAPI;
+
         private Task ApiTask;
+        private Task WebSocketAPITask;
 
         private void InitializeTimer()
         {
@@ -52,7 +55,13 @@ namespace AlphaPlayer
             {
                 try
                 {
+                    // Start the HTTP server
                     this.Api = new PlayerAPI(Config.WebPort, this.Player, Config.WebFilesRelativePath);
+
+                    // Start the WebSockets server
+                    this.WebSocketAPI = new PlayerWebSocketsServer(Config.WebSocketsPort, this.Player);
+
+                    this.Player.PlayerWebSocket = this.WebSocketAPI;
                 }
                 catch (InvalidOperationException)
                 {
@@ -60,17 +69,21 @@ namespace AlphaPlayer
                     if (result.Equals(MessageBoxResult.OK))
                     {
                         this.Api = new PlayerAPI(Config.WebPort, this.Player, Config.WebFilesRelativePath, false);
+                        this.WebSocketAPI = new PlayerWebSocketsServer(Config.WebSocketsPort, this.Player, false);
+                        this.Player.PlayerWebSocket = this.WebSocketAPI;
                     }
                 }
             }
 
-            if (this.Api != null)
+            if (this.Api != null && this.WebSocketAPI != null)
             {
-
                 // Create the api task
                 this.ApiTask = new Task(this.Api.Start);
 
+                this.WebSocketAPITask = new Task(this.WebSocketAPI.Start);
+
                 this.ApiTask.Start();
+                this.WebSocketAPITask.Start();
 
                 // Only catch exceptions that happend synchronous
                 // Exceptions that happend during asynchronous function will be catched and handled inside the API itself.
@@ -78,6 +91,7 @@ namespace AlphaPlayer
                 try
                 {
                     this.ApiTask.Wait();
+                    this.WebSocketAPITask.Wait();
                 }
                 catch (Exception)
                 {
@@ -327,9 +341,10 @@ namespace AlphaPlayer
         private void Exit()
         {
             if (this.Api != null)
-            {
                 this.Api.Stop();
-            }
+
+            if (this.WebSocketAPI != null)
+                this.WebSocketAPI.Stop();
 
             System.Windows.Application.Current.Shutdown();
             Environment.Exit(0);

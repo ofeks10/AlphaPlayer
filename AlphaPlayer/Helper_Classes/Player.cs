@@ -14,6 +14,8 @@ namespace AlphaPlayer.Helper_Classes
         public bool IsPlaying;
         public LinkedList<Song> Playlist;
 
+        public PlayerWebSocketsServer PlayerWebSocket;
+
         public string[] SupportedExtensions;
 
         public Player()
@@ -82,6 +84,9 @@ namespace AlphaPlayer.Helper_Classes
             song.SongLength = this.reader.TotalTime;
             this.CurrentSong = song;
             this.waveOutDevice.Init(reader);
+
+            if (this.PlayerWebSocket != null)
+                this.PlayerWebSocket.SendData();
         }
 
         public bool IsCurrentlyPlaying()
@@ -169,6 +174,9 @@ namespace AlphaPlayer.Helper_Classes
         public void SetVolume(float volume)
         {
             this.waveOutDevice.Volume = volume;
+
+            if (this.PlayerWebSocket != null)
+                this.PlayerWebSocket.SendData();
         }
 
         public Song GetNextSong()
@@ -190,6 +198,9 @@ namespace AlphaPlayer.Helper_Classes
             {
                 this.LoadFile(song);
                 this.PlaySong();
+
+                if (this.PlayerWebSocket != null)
+                    this.PlayerWebSocket.SendData();
             }
             else
             {
@@ -205,6 +216,9 @@ namespace AlphaPlayer.Helper_Classes
             {
                 this.LoadFile(song);
                 this.PlaySong();
+
+                if (this.PlayerWebSocket != null)
+                    this.PlayerWebSocket.SendData();
             }
             else
             {

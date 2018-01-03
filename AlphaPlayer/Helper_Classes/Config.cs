@@ -13,6 +13,8 @@ namespace AlphaPlayer.Helper_Classes
         public static string WebFilesRelativePath;
         public static bool IsAPI = false;
 
+        public static int WebSocketsPort = 8081;
+
         public static void Parse()
         {
             string configFileName = "config.ini";
@@ -44,7 +46,14 @@ namespace AlphaPlayer.Helper_Classes
 
                         Config.WebPort = port;
                         break;
+                    case "web_sock_port":
+                        string strWebSockPort = configLineParts[1];
 
+                        if (!int.TryParse(strWebSockPort, out int WebSockPort))
+                            continue;
+
+                        Config.WebSocketsPort = WebSockPort;
+                        break;
                     case "web_files_relative_path":
                         if (!Config.IsAPI)
                             continue;
