@@ -19,6 +19,7 @@
 * Add current time and song time in the web (`http://localhost:8080/GetTime`)
 
 ### Issues
+* The config 'api' option need to be above 'web_files_relative_path' in the file, otherwise its not parsing 'web_files_relative_path'.
 * ~~There is a race sometimes when clicking on the timing slider causing the song to be paused for some reason.~~
 * ~~There is a crash caused by loading broken/not real mp3 files.~~
 * ~~Crash when port is used.~~
