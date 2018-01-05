@@ -42,7 +42,8 @@ namespace AlphaPlayer.Helper_Classes
                 { "next", this.HandleNext },
                 { "prev", this.HandlePrev },
                 { "play", this.HandlePlay },
-                { "pause", this.HandlePause }
+                { "pause", this.HandlePause },
+                { "get_time", this.HandleGetTime }
             };
         }
 
@@ -101,7 +102,6 @@ namespace AlphaPlayer.Helper_Classes
             string data = General_Helper.DictToJSON(new Dictionary<string, object>() {
                 { "volume", Math.Floor(this.Player.GetVolume() * 100)},
                 { "song_name", this.Player.GetCurrentSongName() },
-                { "current_time",  this.Player.GetCurrentTime().ToString()}
             });
 
             this.Sockets.ToList().ForEach(s => s.Send(data));
@@ -111,7 +111,13 @@ namespace AlphaPlayer.Helper_Classes
         {
             return General_Helper.DictToJSON(new Dictionary<string, object>() {
                 { "volume", Math.Floor(this.Player.GetVolume() * 100)},
-                { "song_name", this.Player.GetCurrentSongName() },
+                { "song_name", this.Player.GetCurrentSongName() }
+            });
+        }
+
+        public string HandleGetTime(Dictionary<string, object> JsonData)
+        {
+            return General_Helper.DictToJSON(new Dictionary<string, object>() {
                 { "current_time",  this.Player.GetCurrentTime().ToString()}
             });
         }

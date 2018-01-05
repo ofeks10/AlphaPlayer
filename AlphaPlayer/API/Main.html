@@ -1,31 +1,42 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
-    <title>Now playing - </title>
-    <meta charset='utf-8' />
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
-            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-            crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/bootstrap-slider.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/css/bootstrap-slider.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <script type="text/javascript" src="/Scripts/script.js"></script>
-</head>
-<body>
-    <button id="connect">Connect to server</button> <span id="con-status">Not Connected</span>
-    <p>Now Playing: <span id='now-playing'></span></p>
-    <button id='play'>
-        <i class="fa fa-play" aria-hidden="true">
-    </i></button>
-    <button id='pause'>
-        <i class="fa fa-pause" aria-hidden="true"></i>
-    </button>
-    <button id='prev'>
-        <i class="fa fa-chevron-left" aria-hidden="true"></i>
-    </button>
-    <button id='next'>
-        <i class="fa fa-chevron-right" aria-hidden="true"></i>
-    </button>
-    <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="14" /> <span id="precentage"></span>
-</body>
+	<head>
+		<title>Now playing - </title>
+		<meta charset='utf-8' />
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script type="text/javascript" src="https://api.html5media.info/1.1.8/html5media.min.js"></script>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/plyr/2.0.18/plyr.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/plyr/2.0.18/plyr.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.js"></script>
+		<link href="Style/style.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="Scripts/script.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="column add-bottom">
+				<div id="mainwrap">
+					<div id="nowPlay">
+						<span class="left" id="npTitle">Paused...</span>
+					</div>
+					<div id="audiowrap">
+						<div id="audio0">
+							<audio preload id="audio1" controls="controls">Your browser does not support HTML5 Audio!</audio>
+						</div>
+						<div id="tracks">
+							<a id="btnPrev">&larr;</a>
+							<a id="btnNext">&rarr;</a>
+						</div>
+					</div>
+					<div id="plwrap">
+						<ul id="plList"></ul>
+					</div>
+				</div>
+			</div>
+			<div class="column add-bottom center">
+				<a id="btnConnect">Connect to server</a>
+			</div>
+		</div>
+	</body>
 </html>
