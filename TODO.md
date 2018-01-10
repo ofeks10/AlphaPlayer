@@ -17,6 +17,7 @@
 * ~~Find a better way to run the WEB API, it currently using AJAX (Set up an WebSockets server that will talk with the client)~~
 * Add songs through Youtube, and not only files.
 * Add current time and song time in the web (`http://localhost:8080/GetTime`)
+* Implement in the server side and in the client side 'on time change' that will broadcase to everyone and that the client will be able to change the time by requesting the server
 
 ### Issues
 * The config 'api' option need to be above 'web_files_relative_path' in the file, otherwise its not parsing 'web_files_relative_path'.
