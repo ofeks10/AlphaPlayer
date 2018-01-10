@@ -86,7 +86,7 @@ namespace AlphaPlayer.Helper_Classes
             this.waveOutDevice.Init(reader);
 
             if (this.PlayerWebSocket != null)
-                this.PlayerWebSocket.SendData();
+                this.PlayerWebSocket.BroadcastData();
         }
 
         public bool IsCurrentlyPlaying()
@@ -176,7 +176,7 @@ namespace AlphaPlayer.Helper_Classes
             this.waveOutDevice.Volume = volume;
 
             if (this.PlayerWebSocket != null)
-                this.PlayerWebSocket.SendData();
+                this.PlayerWebSocket.BroadcastData();
         }
 
         public Song GetNextSong()
@@ -200,7 +200,7 @@ namespace AlphaPlayer.Helper_Classes
                 this.PlaySong();
 
                 if (this.PlayerWebSocket != null)
-                    this.PlayerWebSocket.SendData();
+                    this.PlayerWebSocket.BroadcastData();
             }
             else
             {
@@ -218,7 +218,7 @@ namespace AlphaPlayer.Helper_Classes
                 this.PlaySong();
 
                 if (this.PlayerWebSocket != null)
-                    this.PlayerWebSocket.SendData();
+                    this.PlayerWebSocket.BroadcastData();
             }
             else
             {

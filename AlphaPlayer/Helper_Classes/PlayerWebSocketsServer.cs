@@ -19,13 +19,13 @@ namespace AlphaPlayer.Helper_Classes
 
         public PlayerWebSocketsServer(int port, Player player, bool IsAllInterfaces = true)
         {
-            string Interface = IsAllInterfaces ? "0.0.0.0" : "127.0.0.1";
+            string Interface;
 
             if (IsAllInterfaces && !General_Helper.IsAdministrator())
                 throw new InvalidOperationException();
             else if (IsAllInterfaces && General_Helper.IsAdministrator())
                 Interface = "0.0.0.0";
-            else if (!IsAllInterfaces)
+            else
                 Interface = "127.0.0.1";
 
             this.Server = new WebSocketServer(String.Format("ws://{0}:{1}", Interface, port))
@@ -42,7 +42,9 @@ namespace AlphaPlayer.Helper_Classes
                 { "next", this.HandleNext },
                 { "prev", this.HandlePrev },
                 { "play", this.HandlePlay },
-                { "pause", this.HandlePause }
+                { "pause", this.HandlePause },
+                { "get_playlist", this.HandleGetPlaylist },
+                { "get_time", this.HandleGetTime }
             };
         }
 
@@ -71,32 +73,32 @@ namespace AlphaPlayer.Helper_Classes
             try
             {
                 JsonData = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-                Action = (string)JsonData["action"];
+                Action = (string)JsonData["action"].ToString().Trim();
             } catch (Exception)
             {
-                socket.Send(JsonConvert.SerializeObject(new Dictionary<string, string>() {
-                    { "Error", "Invalid JSON request" }
-                }));
+                socket.Send(this.CraftError("Invalid JSON request"));
                 return;
             }
 
             if (JsonData != null)
             {
+                if(!this.RequestHandler.ContainsKey(Action))
+                {
+                    socket.Send(this.CraftError("Unkown Command"));
+                }
+
                 try
                 {
                     socket.Send(this.RequestHandler[Action].Invoke(JsonData));
                 }
                 catch (Exception ex)
                 {
-                    socket.Send(General_Helper.DictToJSON(new Dictionary<string, object>() {
-                        { "Error", "Unkown Command"},
-                        { "Message",  ex.Message}
-                    }));
+                    socket.Send(this.CraftError(ex.Message));
                 }
             }
         }
 
-        public void SendData()
+        public void BroadcastData()
         {
             string data = General_Helper.DictToJSON(new Dictionary<string, object>() {
                 { "volume", Math.Floor(this.Player.GetVolume() * 100)},
@@ -116,6 +118,20 @@ namespace AlphaPlayer.Helper_Classes
             });
         }
 
+        public string HandleGetTime(Dictionary<string, object> JsonData)
+        {
+            return General_Helper.DictToJSON(new Dictionary<string, object>() {
+                { "current_time",  this.Player.GetCurrentTime().ToString()}
+            });
+        }
+
+        public string HandleGetPlaylist(Dictionary<string, object> JsonData)
+        {
+            return JsonConvert.SerializeObject(new Dictionary<string, object>() {
+                { "playlist", this.Player.GetPlaylistSongsNames() }
+            });
+        }
+
         public string HandleSetVolume(Dictionary<string, object> JsonData)
         {
             if (JsonData.ContainsKey("volume"))
@@ -125,7 +141,7 @@ namespace AlphaPlayer.Helper_Classes
 
                 this.Player.SetVolume((float)Volume / 100.0f);
 
-                return General_Helper.DictToJSON(new Dictionary<string, object>() { { "Success", "true" } });
+                return this.CraftSuccess();
             }
             else
                 throw new InvalidOperationException("No 'volume' data");
@@ -134,24 +150,37 @@ namespace AlphaPlayer.Helper_Classes
         private string HandlePlay(Dictionary<string, object> JsonData)
         {
             this.Player.PlaySong();
-            return General_Helper.DictToJSON(new Dictionary<string, object>() { { "Success", "true" } });
+            return this.CraftSuccess();
         }
 
         private string HandleNext(Dictionary<string, object> JsonData)
         {
             this.Player.PlayNextSong();
-            return General_Helper.DictToJSON(new Dictionary<string, object>() { { "Success", "true" } });
+            return this.CraftSuccess();
         }
 
         private string HandlePrev(Dictionary<string, object> JsonData)
         {
             this.Player.PlayPreviousSong();
-            return General_Helper.DictToJSON(new Dictionary<string, object>() { { "Success", "true" } });
+            return this.CraftSuccess();
         }
 
         private string HandlePause(Dictionary<string, object> JsonData)
         {
             this.Player.StopSong();
+            return this.CraftSuccess();
+        }
+
+        private string CraftError(string msg)
+        {
+            return General_Helper.DictToJSON(new Dictionary<string, object>() {
+                { "Success", "false" },
+                { "Message", String.IsNullOrWhiteSpace(msg) ?  "None" : msg }
+            });
+        }
+
+        private string CraftSuccess()
+        {
             return General_Helper.DictToJSON(new Dictionary<string, object>() { { "Success", "true" } });
         }
 
