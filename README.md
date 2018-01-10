@@ -18,7 +18,7 @@ Actions:
   * `current_time` - current time in the current played song in format: HH:mm:ss
   ```
   Request: {'action': 'get_data'}
-  Response: {"volume": "50","song_name": "05 - ZAYN - Dusk Til… ft. Sia.mp3","current_time": "00:03:03.9160000"}
+  Response: {"volume": "50","song_name": "05 - ZAYN - Dusk Tilâ€¦ ft. Sia.mp3","current_time": "00:03:03.9160000"}
   ```
 * `set_volume` - must contain volume data between 0-100, returns success true/false. If failed it will return `Message` why failed
   ```
@@ -33,3 +33,5 @@ Actions:
   * `Request: {'action': 'get_data'}`
   * `Response: {"playlist": "song1,song2,song3......."}`
 * `get_time` - current time in the current played song in format: HH:mm:ss 
+
+Moreover, everytime the volume changed or song changed, the server will send the data in the same format as you request `get_data` action
