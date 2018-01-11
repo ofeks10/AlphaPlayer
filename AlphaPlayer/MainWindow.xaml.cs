@@ -6,6 +6,7 @@ using AlphaPlayer.Helper_Classes;
 using System.Threading;
 using System.IO;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace AlphaPlayer
 {
@@ -176,8 +177,12 @@ namespace AlphaPlayer
                 this.SongTimeSlider.Value = 0;
             }
 
-            PlaylistListBox.ItemsSource = this.Player.GetPlaylistSongsNames();
-            this.PlaylistListBox.SelectedItem = this.Player.CurrentSong.SongName;
+            PlaylistListBox.ItemsSource = this.Player.Playlist;
+
+            this.PlaylistListBox.InvalidateArrange();
+            this.PlaylistListBox.UpdateLayout();
+
+            this.PlaylistListBox.SelectedItem = this.Player.CurrentSong;
 
             // Set the title and the label to the current song name
             this.WhatsPlayingLabel.Content = this.Player.CurrentSong.SongName;
@@ -204,7 +209,7 @@ namespace AlphaPlayer
             this.WhatsPlayingLabel.Content = this.Player.CurrentSong.SongName;
             this.Title = this.Player.CurrentSong.SongName;
 
-            PlaylistListBox.ItemsSource = this.Player.GetPlaylistSongsNames();
+            // PlaylistListBox.ItemsSource = this.Player.GetPlaylistSongsNames();
 
             this.VolumeSlider.Value = this.Player.GetVolume() * 100f;
         }
@@ -367,8 +372,7 @@ namespace AlphaPlayer
 
         private void PlaylistListBox_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            string selectedItem = this.PlaylistListBox.SelectedItem.ToString();
-            Song song = this.Player.GetSongByName(selectedItem);
+            Song song = (Song)this.PlaylistListBox.SelectedItem;
             try
             {
                 this.Player.PlaySpecificSong(song);

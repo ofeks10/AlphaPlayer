@@ -30,7 +30,14 @@
         <Label x:Name="SongTotalTimeLabel" Content="00:00:00" HorizontalAlignment="Left" Margin="486,116,0,0" VerticalAlignment="Top" Height="26" Width="54"/>
         <Label Content="/" HorizontalAlignment="Left" Margin="475,116,0,0" VerticalAlignment="Top" Height="26" Width="15"/>
         <Label x:Name="VolumePrecentageLabel" Content="50%" HorizontalAlignment="Left" Margin="494,22,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.108,-0.269" Height="26" Width="46"/>
-        <ListBox x:Name="PlaylistListBox" HorizontalAlignment="Left" Height="179" Margin="12,184,0,0" VerticalAlignment="Top" Width="518" PreviewMouseDoubleClick="PlaylistListBox_PreviewMouseDoubleClick"/>
+        <ListView ScrollViewer.HorizontalScrollBarVisibility="Disabled" x:Name="PlaylistListBox" HorizontalAlignment="Left" Height="179" Margin="12,184,0,0" VerticalAlignment="Top" Width="518" PreviewMouseDoubleClick="PlaylistListBox_PreviewMouseDoubleClick">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="400px" Header="Song Name" DisplayMemberBinding="{Binding Path=SongName}" />
+                    <GridViewColumn Header="Duration" Width="118px" DisplayMemberBinding="{Binding Path=SongLength}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
         <Label Content="Queue:" HorizontalAlignment="Left" Margin="12,153,0,0" VerticalAlignment="Top" Height="26" Width="49"/>
     </Grid>
 </Window>
